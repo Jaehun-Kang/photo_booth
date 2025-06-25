@@ -1,0 +1,26 @@
+.main {
+  padding-top: 40px;
+  padding-inline: 40px;
+  min-width: 1200px;
+  max-width: 2400px;
+  height: 100%;
+  margin-inline: auto;
+}
+
+.cam_grid {
+  display: grid;
+  width: 100%;
+  height: auto;
+  margin-top: 30px;
+  margin-inline: auto;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.cam_grid--filter {
+  aspect-ratio: 4/3;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.cam_grid--filter:hover {
+  cursor: pointer;
+}/*# sourceMappingURL=App.css.map */

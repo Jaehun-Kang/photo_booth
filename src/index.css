@@ -1,0 +1,36 @@
+/* 기본 박스 사이징, html/body reset 등 */
+*, 
+*::before, 
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: rgb(0, 0, 0);
+  color: rgb(187, 187, 187);
+  width: 100vw;
+  height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+p {
+  font-size: 2.5rem;
+  font-weight: 300;
+  text-align: center;
+}
+
+canvas {
+  display: block;
+}
