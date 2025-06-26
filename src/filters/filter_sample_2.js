@@ -5,7 +5,7 @@ export const fadeFilter = {
   },
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    p5js.fill(0, 0, 0, 15); // 배경 페이드
+    p5js.fill(0, 0, 0, 15);
     p5js.rect(0, 0, canvasW, canvasH);
 
     offscreen.loadPixels();
@@ -23,10 +23,8 @@ export const fadeFilter = {
         const scaleX = canvasW / captureW;
         const scaleY = canvasH / captureH;
 
-        // 밝은 정도에 비례해 알파값 결정 (최대 180)
         const alpha = p5js.map(brightness, 80, 255, 50, 180, true);
 
-        // 밝은 부분일수록 원본 색상에 가깝고 투명도 조절
         p5js.fill(r, g, b, alpha);
         p5js.circle(x * scaleX + scaleX / 2, y * scaleY + scaleY / 2, 8);
       }

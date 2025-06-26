@@ -1,6 +1,6 @@
 export const circleFilter = {
   setup(p5js) {
-    p5js.noStroke(); // 필요하면 여기에 다른 초기 설정도 가능
+    p5js.noStroke();
   },
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {

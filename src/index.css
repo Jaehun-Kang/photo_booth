@@ -1,4 +1,3 @@
-/* 기본 박스 사이징, html/body reset 등 */
 *, 
 *::before, 
 *::after {
@@ -12,9 +11,10 @@ html, body {
   color: rgb(187, 187, 187);
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, p {
   margin: 0;
   padding: 0;
 }
@@ -29,8 +29,14 @@ p {
   font-size: 2.5rem;
   font-weight: 300;
   text-align: center;
+  margin-block: 20px;
 }
 
 canvas {
   display: block;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
 }

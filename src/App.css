@@ -1,7 +1,9 @@
 .main {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   padding-top: 40px;
   padding-inline: 40px;
-  min-width: 1200px;
+  min-width: 620px;
   max-width: 2400px;
   height: 100%;
   margin-inline: auto;
@@ -11,10 +13,12 @@
   display: grid;
   width: 100%;
   height: auto;
+  max-height: 80vh;
   margin-top: 30px;
   margin-inline: auto;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 20px;
+  overflow-y: auto;
 }
 .cam_grid--filter {
   aspect-ratio: 4/3;
