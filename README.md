@@ -2,7 +2,7 @@
 
 이 프로젝트는 **React + Vite + p5.js**를 기반으로 한 웹 애플리케이션으로, 웹캠에 다양한 필터 효과를 실시간으로 적용하고, 선택한 필터로 사진을 찍을 수 있습니다.
 
-URL: 
+URL: https://jaehun-kang.github.io/photo_booth/
 
 ---
 
