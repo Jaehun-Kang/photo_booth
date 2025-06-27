@@ -1,12 +1,60 @@
-# React + Vite
+# 📸 웹캠 필터 미리보기 앱
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+이 프로젝트는 **React + Vite + p5.js**를 기반으로 한 웹 애플리케이션으로, 웹캠에 다양한 필터 효과를 실시간으로 적용하고, 선택한 필터로 사진을 찍을 수 있습니다.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 주요 기능
 
-## Expanding the ESLint configuration
+- 💻 실시간 웹캠 영상 미리보기  
+- 🎨 다양한 p5.js 필터 효과 적용  
+- 📸 필터가 적용된 상태에서 사진 촬영  
+- ⚡ 빠른 개발 환경 (Vite 기반)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠 사용 기술
+
+- **React** – UI 컴포넌트 구성  
+- **Vite** – 빠른 개발 서버 및 번들링  
+- **p5.js** – 필터 및 시각 효과 구현  
+- **MediaDevices API** – 웹캠 스트리밍
+
+---
+
+## 📦 설치 및 실행 방법
+
+```bash
+npm install      # 의존성 설치
+npm run dev      # 개발 서버 실행
+```
+
+---
+
+## 📁 프로젝트 구조
+
+```
+src/
+├── components/
+│   └── FilterPreview.jsx      # 필터 + 웹캠 미리보기 컴포넌트
+├── filters/                   # 필터
+├── App.jsx
+└── main.jsx
+```
+
+---
+
+## 🖼️ 필터 목록
+
+<!-- - `grayscale` – 흑백 필터  
+- `feedback` – 잔상 효과 필터  
+- `invert` – 색 반전 필터 (직접 구현 가능) -->
+
+---
+
+## ✅ TODO
+
+- [ ] 필터 선택 후 UI  
+- [ ] 촬영 방식 구현
+- [ ] 사진 저장 및 다운로드
+- [ ] 프린트 요청
