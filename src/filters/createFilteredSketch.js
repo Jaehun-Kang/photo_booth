@@ -2,10 +2,11 @@ export function createFilteredSketch({
   video,
   width,
   height,
-  captureW = 32,
-  captureH = 24,
+  captureW = 64,
+  captureH = 48,
   filter
 }) {
+
   return function sketch(p5js) {
     let offscreen;
 
@@ -28,8 +29,24 @@ export function createFilteredSketch({
       ctx.restore();
 
       offscreen.loadPixels();
-
       if (!offscreen.pixels || offscreen.pixels.length < 4 * captureW * captureH) return;
+
+      const videoAspect = captureW / captureH;
+      const canvasAspect = width / height;
+
+      let drawWidth, drawHeight, offsetX, offsetY;
+
+      if (canvasAspect > videoAspect) {
+        drawHeight = height;
+        drawWidth = drawHeight * videoAspect;
+        offsetX = (width - drawWidth) / 2;
+        offsetY = 0;
+      } else {
+        drawWidth = width;
+        drawHeight = drawWidth / videoAspect;
+        offsetX = 0;
+        offsetY = (height - drawHeight) / 2;
+      }
 
       filter.draw(p5js, offscreen, width, height, captureW, captureH);
     };

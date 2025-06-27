@@ -1,25 +1,37 @@
 export const circleFilter = {
   setup(p5js) {
     p5js.noStroke();
+    p5js.colorMode(p5js.RGB, 255);
   },
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
     p5js.background(0);
 
-    for (let idx = 0; idx < captureW * captureH; idx++) {
-      const r = offscreen.pixels[4 * idx];
-      const g = offscreen.pixels[4 * idx + 1];
-      const b = offscreen.pixels[4 * idx + 2];
-      const brightness = p5js.brightness(p5js.color(r, g, b));
-      const diameter = p5js.map(brightness, 0, 255, 2, 20);
+    const scaleX = canvasW / captureW;
+    const scaleY = canvasH / captureH;
 
-      const x = idx % captureW;
-      const y = Math.floor(idx / captureW);
-      const scaleX = canvasW / captureW;
-      const scaleY = canvasH / captureH;
+    const pixels = offscreen.pixels;
+    const expectedLength = 4 * captureW * captureH;
+    if (!pixels || pixels.length < expectedLength) return;
 
-      p5js.fill(255);
-      p5js.circle(x * scaleX + scaleX / 2, y * scaleY + scaleY / 2, diameter);
+    for (let y = 0; y < captureH; y++) {
+      for (let x = 0; x < captureW; x++) {
+        const idx = 4 * (y * captureW + x);
+        const r = pixels[idx];
+        const g = pixels[idx + 1];
+        const b = pixels[idx + 2];
+
+        const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+
+        const diameter = p5js.map(brightness, 0, 255, 2, Math.min(scaleX, scaleY));
+
+        p5js.fill(255);
+        p5js.circle(
+          x * scaleX + scaleX / 2,
+          y * scaleY + scaleY / 2,
+          diameter
+        );
+      }
     }
   }
 };

@@ -1,32 +1,67 @@
 .main {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  padding-top: 40px;
   padding-inline: 40px;
+  width: 100%;
   min-width: 620px;
-  max-width: 2400px;
-  height: 100%;
+  max-width: 2600px;
+  height: 100vh;
   margin-inline: auto;
 }
 
-.cam_grid {
+.header {
   display: grid;
-  width: 100%;
-  height: auto;
-  max-height: calc(100vh * .8);
-  margin-top: 30px;
-  margin-inline: auto;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 20px;
-  overflow-y: auto;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  padding-top: 20px;
 
-  &--filter {
-    aspect-ratio: 4 / 3;
-    border-radius: 10px;
-    overflow: hidden;
+
+  h1 {
+  font-size: 3rem;
+  font-weight: 400;
+  text-align: right;
+}
+
+  img {
+    aspect-ratio: 1 / 1;
+    width: 130px;
   }
+}
 
-  &--filter:hover {
-    cursor: pointer;
+
+.cam_grid--section {
+  overflow: hidden;
+  height: 100%;
+  display: grid;
+
+  &--container {
+    overflow-y: auto;
+    display: grid;
+    max-height: 100%;
+    margin-block: auto;
+    grid-template-columns: repeat(5, 1fr); //필요 시 수정
+    gap: 20px;
+
+    &--filter {
+      aspect-ratio: 4 / 3;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    &--filter:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+.footer {
+  padding-inline: 40px;
+  padding-bottom: 32px;
+
+  p {
+  font-size: 2rem;
+  font-weight: 200;
+  text-align: center;
+  margin-block: 20px;
   }
 }

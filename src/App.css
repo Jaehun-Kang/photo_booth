@@ -1,30 +1,59 @@
 .main {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  padding-top: 40px;
   padding-inline: 40px;
+  width: 100%;
   min-width: 620px;
-  max-width: 2400px;
-  height: 100%;
+  max-width: 2600px;
+  height: 100vh;
   margin-inline: auto;
 }
 
-.cam_grid {
+.header {
   display: grid;
-  width: 100%;
-  height: auto;
-  max-height: 80vh;
-  margin-top: 30px;
-  margin-inline: auto;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 20px;
-  overflow-y: auto;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  padding-top: 20px;
 }
-.cam_grid--filter {
+.header h1 {
+  font-size: 3rem;
+  font-weight: 400;
+  text-align: right;
+}
+.header img {
+  aspect-ratio: 1/1;
+  width: 130px;
+}
+
+.cam_grid--section {
+  overflow: hidden;
+  height: 100%;
+  display: grid;
+}
+.cam_grid--section--container {
+  overflow-y: auto;
+  display: grid;
+  max-height: 100%;
+  margin-block: auto;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+.cam_grid--section--container--filter {
   aspect-ratio: 4/3;
   border-radius: 10px;
   overflow: hidden;
 }
-.cam_grid--filter:hover {
+.cam_grid--section--container--filter:hover {
   cursor: pointer;
+}
+
+.footer {
+  padding-inline: 40px;
+  padding-bottom: 32px;
+}
+.footer p {
+  font-size: 2rem;
+  font-weight: 200;
+  text-align: center;
+  margin-block: 20px;
 }/*# sourceMappingURL=App.css.map */
