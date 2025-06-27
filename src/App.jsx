@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import FilterPreview from './components/FilterPreview';
-import logo from './assets/MR_logo.png';
+import logo from './assets/logo.svg';
 import { createFilteredSketch } from './filters/createFilteredSketch';
 import { templateFilter1 } from './filters/filter_1';
 import { templateFilter2 } from './filters/filter_2';
@@ -78,7 +78,7 @@ function App() {
   return (
     <div className="main">
       <div className="header">
-        <img src={logo} alt="마법연구회 로고" />
+        <img src={logo} alt="Logo" />
         <h1>MAGIC RESEARCH</h1>
       </div>
       <div className="cam_grid--section">
