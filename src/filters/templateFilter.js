@@ -1,6 +1,6 @@
 // 템플릿 파일입니다. 이 파일은 수정하지 마시고 추가로 필터 만드실 경우 복사하여 사용해주세요!
 
-export const templateFilter = { // 필터 이름을 원하는 대로 변경하세요
+export const templateFilter = { // 함수 이름을 원하는 대로 변경하세요(index.js에서도 변경 필요)
   setup(p5js) {
     //setup 함수에 넣을 부분
     //p5js 내장함수 앞에 p5js.를 붙여야 함

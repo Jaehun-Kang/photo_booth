@@ -1,6 +1,6 @@
 // 사용하시기 전 디스코드에 다른 팀이 사용하고 있는지 확인해주시고,
 // 사용하실 때 몇번 파일 쓰겠다고 말씀해주세요(디스코드 photo booth 채널에)
-export const templateFilter2 = { // 함수 이름을 원하는 대로 변경하세요(파일명 변경X)
+export const templateFilter2 = { // 함수 이름을 원하는 대로 변경하세요(파일명 변경X, index.js에서도 변경 필요)
   setup(p5js) {
     //setup 함수에 넣을 부분
     //p5js 내장함수 앞에 p5js.를 붙여야 함

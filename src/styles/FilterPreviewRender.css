@@ -39,7 +39,7 @@
   gap: 20px;
 }
 .cam_grid--section--container--filter {
-  aspect-ratio: 4/3;
+  aspect-ratio: 16/9;
   border-radius: 10px;
   overflow: hidden;
 }
@@ -56,4 +56,4 @@
   font-weight: 200;
   text-align: center;
   margin-block: 20px;
-}/*# sourceMappingURL=App.css.map */
+}/*# sourceMappingURL=FilterPreviewRender.css.map */

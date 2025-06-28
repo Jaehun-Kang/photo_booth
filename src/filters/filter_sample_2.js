@@ -6,7 +6,7 @@ export const fadeFilter = {
   },
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    p5js.fill(0, 0, 0, 15);
+    p5js.fill(0, 0, 0, 20);
     p5js.rect(0, 0, canvasW, canvasH);
 
     offscreen.loadPixels();
@@ -16,10 +16,10 @@ export const fadeFilter = {
 
     const scaleX = canvasW / captureW;
     const scaleY = canvasH / captureH;
-    const baseDiameter = Math.min(scaleX, scaleY) * 0.6;
+    const baseDiameter = Math.min(scaleX, scaleY) * 5;
 
-    for (let y = 0; y < captureH; y++) {
-      for (let x = 0; x < captureW; x++) {
+    for (let y = 0; y < captureH; y+= 10) {
+      for (let x = 0; x < captureW; x+= 10) {
         const idx = 4 * (y * captureW + x);
         const r = pixels[idx];
         const g = pixels[idx + 1];

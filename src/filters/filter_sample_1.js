@@ -14,8 +14,8 @@ export const circleFilter = {
     const expectedLength = 4 * captureW * captureH;
     if (!pixels || pixels.length < expectedLength) return;
 
-    for (let y = 0; y < captureH; y++) {
-      for (let x = 0; x < captureW; x++) {
+    for (let y = 0; y < captureH; y+= 10) {
+      for (let x = 0; x < captureW; x+= 10) {
         const idx = 4 * (y * captureW + x);
         const r = pixels[idx];
         const g = pixels[idx + 1];
@@ -23,7 +23,7 @@ export const circleFilter = {
 
         const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
 
-        const diameter = p5js.map(brightness, 0, 255, 2, Math.min(scaleX, scaleY));
+        const diameter = p5js.map(brightness, 0, 255, 1, Math.min(scaleX, scaleY)*10);
 
         p5js.fill(255);
         p5js.circle(

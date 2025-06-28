@@ -2,8 +2,8 @@ export function createFilteredSketch({
   video,
   width,
   height,
-  captureW = 64,
-  captureH = 48,
+  captureW = 320,
+  captureH = 240,
   filter
 }) {
 

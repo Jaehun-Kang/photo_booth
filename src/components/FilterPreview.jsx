@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
 import p5 from 'p5';
 
-const FilterPreview = ({ sketchFactory, video }) => {
+const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
   const containerRef = useRef(null);
   const p5InstanceRef = useRef(null);
   const creatingInstanceRef = useRef(false);
@@ -39,7 +39,6 @@ const FilterPreview = ({ sketchFactory, video }) => {
           Math.abs(prev.width - width) < 2 &&
           Math.abs(prev.height - height) < 2
         ) {
-          // 거의 변화 없으면 무시
           return prev;
         }
         return { width, height };
@@ -94,7 +93,7 @@ const FilterPreview = ({ sketchFactory, video }) => {
       creatingInstanceRef.current = true;
       setReady(false);
 
-      // 중복된 canvas 제거
+      // 중복 캔버스 제거
       if (containerRef.current) {
         const canvases = containerRef.current.querySelectorAll('canvas');
         canvases.forEach(canvas => canvas.remove());
@@ -113,10 +112,9 @@ const FilterPreview = ({ sketchFactory, video }) => {
     const safelyReplaceInstance = () => {
       if (p5InstanceRef.current) {
         if (removePendingRef.current) {
-          // 제거 중이면 새 생성 중단
           return;
         }
-        removePendingRef.current = true; // 제거 시작 표시
+        removePendingRef.current = true;
 
         p5InstanceRef.current.remove();
         p5InstanceRef.current = null;
@@ -127,7 +125,7 @@ const FilterPreview = ({ sketchFactory, video }) => {
         }
 
         setTimeout(() => {
-          removePendingRef.current = false; // 제거 완료 표시
+          removePendingRef.current = false;
           createInstance();
         }, 50);
       } else {
@@ -152,6 +150,7 @@ const FilterPreview = ({ sketchFactory, video }) => {
   return (
     <div
       ref={containerRef}
+      onClick={onSelectFilter}
       style={{
         width: '100%',
         aspectRatio:
