@@ -6,7 +6,7 @@ export const fadeFilter = {
   },
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    p5js.fill(0, 0, 0, 20);
+    p5js.fill(0, 0, 0, 10);
     p5js.rect(0, 0, canvasW, canvasH);
 
     offscreen.loadPixels();
@@ -27,13 +27,13 @@ export const fadeFilter = {
 
         const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
 
-        if (brightness > 80) {
-          const alpha = p5js.map(brightness, 80, 255, 50, 180, true);
+        if (brightness > 120) {
+          const alpha = p5js.map(brightness, 120, 255, 50, 150, true);
 
           p5js.fill(r, g, b, alpha);
           p5js.circle(
-            x * scaleX + scaleX / 2,
-            y * scaleY + scaleY / 2,
+            x * scaleX + scaleX * 2.5,
+            y * scaleY + scaleY * 2.5,
             baseDiameter
           );
         }

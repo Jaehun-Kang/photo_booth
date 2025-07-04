@@ -4,14 +4,18 @@ export function createFilteredSketch({
   height,
   captureW = 320,
   captureH = 240,
-  filter
+  filter,
+  scaleRatio = 16 / 9,
 }) {
 
   return function sketch(p5js) {
     let offscreen;
-
+    
     p5js.setup = () => {
-      p5js.createCanvas(width, height);
+      const computedHeight = width / scaleRatio;
+      captureH = Math.round(captureW / scaleRatio);
+
+      p5js.createCanvas(width, computedHeight);
       offscreen = p5js.createGraphics(captureW, captureH);
 
       if (filter.setup) filter.setup(p5js);

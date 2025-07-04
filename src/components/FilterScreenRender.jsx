@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import FilterScreen from './FilterScreen.jsx';  // 기존 FilterScreen 컴포넌트
+import FilterScreen from './FilterScreen.jsx';
 import { createScreenSketch } from '../filters/createScreenSketch.js';
 import { filters } from '../filters';
 import '../styles/FilterScreenRender.css';
@@ -8,6 +8,7 @@ function FilterScreenRender({ filterIndex, onBack }) {
   const [video, setVideo] = useState(null);
   const [videoReady, setVideoReady] = useState(false);
   const [webcamError, setWebcamError] = useState(null);
+  const [videoSize, setVideoSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     const p5video = document.createElement('video');
@@ -50,9 +51,12 @@ function FilterScreenRender({ filterIndex, onBack }) {
 
   // video와 videoReady 상태가 바뀌면 메모이제이션된 sketchFactory 반환
   const getSketchFactory = useCallback(
-    (filter) => (w, h, onReady) =>
-      createScreenSketch({ video, width: w, height: h, filter, onReady }),
-    [video, videoReady]
+    (filter) => (w, h, onReady) => {
+      const scaleRatio = videoSize.width / videoSize.height;
+
+      return createScreenSketch({ video, width: w, height: h, filter, onReady, scaleRatio, videoSize });
+    },
+    [video, videoReady, videoSize]
   );
 
   // video가 준비되면 모든 필터에 대한 sketchFactory 배열 생성

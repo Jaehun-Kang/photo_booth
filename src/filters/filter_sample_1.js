@@ -27,8 +27,8 @@ export const circleFilter = {
 
         p5js.fill(255);
         p5js.circle(
-          x * scaleX + scaleX / 2,
-          y * scaleY + scaleY / 2,
+          x * scaleX + scaleX * 5,
+          y * scaleY + scaleY * 5,
           diameter
         );
       }

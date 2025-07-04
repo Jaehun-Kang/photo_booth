@@ -11,6 +11,7 @@ function FilterPreviewRender({ onSelectFilter }) {
   const [video, setVideo] = useState(null);
   const [videoReady, setVideoReady] = useState(false);
   const [webcamError, setWebcamError] = useState(null);
+  const [videoSize, setVideoSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     const p5video = document.createElement('video');
@@ -29,6 +30,10 @@ function FilterPreviewRender({ onSelectFilter }) {
 
       const onLoadedMetadata = () => {
         setVideo(p5video);
+        setVideoSize({
+          width: p5video.videoWidth,
+          height: p5video.videoHeight,
+        });
         setVideoReady(true);
         p5video.removeEventListener('loadedmetadata', onLoadedMetadata);
       };
@@ -46,9 +51,11 @@ function FilterPreviewRender({ onSelectFilter }) {
 
   const getSketchFactory = useCallback(
     (filter) => (w, h) => {
-      return createFilteredSketch({ video, width: w, height: h, filter });
+      const scaleRatio = videoSize.width / videoSize.height;
+
+      return createFilteredSketch({ video, width: w, height: h, filter, scaleRatio, videoSize });
     },
-    [video, videoReady]
+    [video, videoReady, videoSize]
   );
 
   const sketchFactories = useMemo(() => {
