@@ -1,7 +1,6 @@
 .main {
   display: grid;
   grid-template-rows: auto 1fr auto;
-  padding-inline: 40px;
   width: 100%;
   min-width: 620px;
   max-width: 2600px;
@@ -14,6 +13,7 @@
   grid-template-columns: auto 1fr;
   align-items: center;
   padding-top: 20px;
+  padding-inline: 40px;
 }
 .header h1 {
   font-size: 3rem;
@@ -35,16 +35,19 @@
   display: grid;
   max-height: 100%;
   margin-block: auto;
-  grid-template-columns: repeat(5, 1fr);
+  padding-inline: 40px;
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 .cam_grid--section--container--filter {
   aspect-ratio: 16/9;
-  border-radius: 10px;
+  border-radius: 4px;
+  border: 0.75px solid rgba(255, 255, 255, 0);
   overflow: hidden;
 }
 .cam_grid--section--container--filter:hover {
   cursor: pointer;
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .footer {

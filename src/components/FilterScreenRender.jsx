@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import FilterScreen from './FilterScreen.jsx';
 import { createScreenSketch } from '../filters/createScreenSketch.js';
 import { filters } from '../filters';
+import backIcon from '../assets/arrow_left.svg';
 import '../styles/FilterScreenRender.css';
 
 function FilterScreenRender({ filterIndex, onBack }) {
@@ -85,7 +86,9 @@ function FilterScreenRender({ filterIndex, onBack }) {
 
   return (
     <div>
-      <button className='btn_back' onClick={onBack}>←</button>
+      <button className='btn_back' onClick={onBack}>
+        <img className='btn_back--img' src={backIcon} alt="Back" />
+      </button>
       <div className='cam_screen--section'>
         <div className='cam_screen--section--container'>
           <FilterScreen

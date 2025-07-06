@@ -2,6 +2,7 @@ import React from 'react';
 import FilterPreviewRender from './components/FilterPreviewRender.jsx';
 import FilterScreenRender from './components/FilterScreenRender.jsx';
 import { useCameraInfo } from './hooks/useCameraInfo.js';
+import './styles/App.css';
 
 function App() {
   const [selectedFilterIndex, setSelectedFilterIndex] = React.useState(null);
@@ -17,14 +18,14 @@ function App() {
 
   return selectedFilterIndex === null ? (
     <FilterPreviewRender
-      onSelectFilter={setSelectedFilterIndex}
-      videoSize={videoSize}
+    onSelectFilter={setSelectedFilterIndex}
+    videoSize={videoSize}
     />
   ) : (
     <FilterScreenRender
-      filterIndex={selectedFilterIndex}
-      onBack={() => setSelectedFilterIndex(null)}
-      videoSize={videoSize}
+    filterIndex={selectedFilterIndex}
+    onBack={() => setSelectedFilterIndex(null)}
+    videoSize={videoSize}
     />
   );
 }
