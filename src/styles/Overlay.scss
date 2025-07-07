@@ -1,0 +1,51 @@
+.overlay-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.overlay-button {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 8px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.overlay-countdown {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 5rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px black;
+  pointer-events: none;
+}
+
+.overlay-flash {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  animation: flash 0.2s ease-out;
+  pointer-events: none;
+}
+
+@keyframes flash {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

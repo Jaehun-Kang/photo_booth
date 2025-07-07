@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import FilterScreen from './FilterScreen.jsx';
+import Overlay from './Overlay.jsx';
 import { createScreenSketch } from '../filters/createScreenSketch.js';
 import { filters } from '../filters';
 import backIcon from '../assets/arrow_left.svg';
@@ -10,6 +11,8 @@ function FilterScreenRender({ filterIndex, onBack }) {
   const [videoReady, setVideoReady] = useState(false);
   const [webcamError, setWebcamError] = useState(null);
   const [videoSize, setVideoSize] = useState({ width: 0, height: 0 });
+  const [countdown, setCountdown] = useState(null);
+  const [showFlash, setShowFlash] = useState(false);
 
   useEffect(() => {
     const p5video = document.createElement('video');
@@ -84,6 +87,24 @@ function FilterScreenRender({ filterIndex, onBack }) {
     return <p>loading...</p>;
   }
 
+  // 카운트다운 시작
+  const handleCaptureStart = () => {
+    let count = 10;
+    setCountdown(count);
+    const interval = setInterval(() => {
+      count--;
+      if (count >= 1) {
+        setCountdown(count);
+      } else {
+        clearInterval(interval);
+        setCountdown(null);
+        setShowFlash(true);
+        setTimeout(() => setShowFlash(false), 200);
+        //저장 로직 들어갈 곳..
+      }
+    }, 1000);
+  };
+
   return (
     <div>
       <button className='btn_back' onClick={onBack}>
@@ -97,6 +118,11 @@ function FilterScreenRender({ filterIndex, onBack }) {
           />
         </div>
       </div>
+      <Overlay
+        onStartCapture={handleCaptureStart}
+        countdown={countdown}
+        showFlash={showFlash}
+      />
     </div>
   );
 }
