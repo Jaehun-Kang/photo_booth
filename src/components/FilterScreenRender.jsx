@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import html2canvas from 'html2canvas';
 import FilterScreen from './FilterScreen.jsx';
 import Overlay from './Overlay.jsx';
 import { createScreenSketch } from '../filters/createScreenSketch.js';
@@ -14,6 +15,9 @@ function FilterScreenRender({ filterIndex, onBack }) {
   const [countdown, setCountdown] = useState(null);
   const [showFlash, setShowFlash] = useState(false);
   const [captureProgress, setCaptureProgress] = useState(null);
+  const [capturedImages, setCapturedImages] = useState([]);
+  const [showResult, setShowResult] = useState(false);
+
 
   useEffect(() => {
     const p5video = document.createElement('video');
@@ -70,7 +74,7 @@ function FilterScreenRender({ filterIndex, onBack }) {
     return filters.map(filter => getSketchFactory(filter));
   }, [videoReady, getSketchFactory]);
 
-  // 필터 오류 반환
+  // 필터 오류 시 반환
   if (
     typeof filterIndex !== 'number' ||
     filterIndex < 0 || filterIndex >= filters.length
@@ -89,14 +93,17 @@ function FilterScreenRender({ filterIndex, onBack }) {
     return <p>loading...</p>;
   }
 
-  // 촬영 4번 반복
+  // 촬영 n번 반복
   const handleCaptureStart = async () => {
+    setCapturedImages([]);
+
     setCaptureProgress(0);
     for (let i = 0; i < 4; i++) {
       await runSingleCapture();
       setCaptureProgress(i + 1);
     }
     setCaptureProgress(null);
+    setShowResult(true);
   };
 
   // 촬영 함수
@@ -115,7 +122,14 @@ function FilterScreenRender({ filterIndex, onBack }) {
           setShowFlash(true);
           setTimeout(() => {
             setShowFlash(false);
-            // 저장 코드 들어갈 곳
+            
+            // 개별 이미지 저장 로직
+            const canvas = document.querySelector('canvas');
+            if (canvas) {
+              const imageData = canvas.toDataURL('image/png');
+              setCapturedImages((prev) => [...prev, imageData]);
+            }
+
             resolve();
           }, 200);
         }
@@ -123,8 +137,71 @@ function FilterScreenRender({ filterIndex, onBack }) {
     });
   }
 
+  function CaptureResult({ images, onBack }) {
+    const resultRef = useRef();
 
-  return (
+    const handleSave = async () => {
+      if (!resultRef.current) return;
+
+      const canvas = await html2canvas(resultRef.current, {
+        scale: window.devicePixelRatio,
+        useCORS: true,
+      });
+
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = 'photo_result.png';
+      link.click();
+    };
+
+    return (
+      <div className='result'>
+        <div className='result-container' onClick={handleSave} title='Save'>
+          <div>
+            <div className="result-frame">
+              {images.map((src, idx) => (
+                <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className='forSave' ref={resultRef}>
+          <div className='result-container'>
+            <div>
+              <div className="result-frame">
+                {images.map((src, idx) => (
+                  <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
+                ))}
+              </div>
+            </div>
+          </div>
+          <div className='result-container'>
+            <div>
+              <div className="result-frame">
+                {images.map((src, idx) => (
+                  <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        <button className='btn_back' onClick={onBack}>
+          <img className='btn_back--img' src={backIcon} alt="Back" />
+        </button>
+      </div>
+    );
+  }
+
+
+  return showResult ? (
+    <CaptureResult
+      images={capturedImages}
+      onBack={() => {
+        setShowResult(false);
+        setCapturedImages([]);
+      }}
+    />
+  ) : (
     <div>
       {captureProgress === null && (
         <button className='btn_back' onClick={onBack}>

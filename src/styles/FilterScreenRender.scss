@@ -8,8 +8,8 @@
 .btn_back{
   position: absolute;
   width: 48px;
-  margin-top: 4px;
-  margin-left: 4px;
+  top: 4px;
+  left: 4px;
   opacity: .5;
   z-index: 10;
   justify-items: center;
@@ -39,5 +39,46 @@
     display: grid;
     justify-content: center;
     align-items: center;
+  }
+}
+
+.result {
+  display: grid;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(44, 44, 44);
+
+  .forSave {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    position: absolute;
+    scale: 10;
+    z-index: -1;
+  }
+
+  &-container {
+    display: grid;
+    width: 6.5cm;
+    height: 16.5cm;
+    aspect-ratio: 6.5 / 16.5;
+    padding-top: 20px;
+    padding-inline: 10px;
+    background: black;
+    cursor: pointer;
+  }
+
+  &-frame {
+    display: grid;
+    margin-inline: auto;
+    grid-template-rows: repeat(4, 1fr);
+    gap: 10px;
+  
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
   }
 }
