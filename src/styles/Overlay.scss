@@ -1,51 +1,66 @@
-.overlay-container {
+.overlay {
   position: absolute;
+  line-height: 100%;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
   z-index: 10;
-}
 
-.overlay-button {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 1rem 2rem;
-  font-size: 1.2rem;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 8px;
-  pointer-events: auto;
-  cursor: pointer;
-}
+  &--progress {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: white;
+    background: rgba(0, 0, 0, 0.4);
+    padding: .375rem .75rem;
+    border-radius: .25rem;
+  }
 
-.overlay-countdown {
-  position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 5rem;
-  font-weight: bold;
-  color: white;
-  text-shadow: 0 0 10px black;
-  pointer-events: none;
-}
+  &--button {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: .75rem 1.25rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255);
+    border: none;
+    border-radius: .5rem;
+    pointer-events: auto;
+    cursor: pointer;
+  }
 
-.overlay-flash {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: white;
-  animation: flash 0.2s ease-out;
-  pointer-events: none;
+  &--countdown {
+    position: absolute;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 7rem;
+    font-weight: 700;
+    line-height: 100%;
+    color: white;
+    opacity: .8;
+    text-shadow: 0 0 .625rem black;
+    pointer-events: none;
+  }
+
+  &--flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    animation: flash 0.2s ease-out;
+    pointer-events: none;
+  }
 }
 
 @keyframes flash {
-  from { opacity: 1; }
+  from { opacity: .7; }
   to { opacity: 0; }
 }

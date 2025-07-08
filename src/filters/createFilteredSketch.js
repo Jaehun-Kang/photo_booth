@@ -15,6 +15,7 @@ export function createFilteredSketch({
       const computedHeight = width / scaleRatio;
       captureH = Math.round(captureW / scaleRatio);
 
+      p5js.pixelDensity(1);
       p5js.createCanvas(width, computedHeight);
       offscreen = p5js.createGraphics(captureW, captureH);
 

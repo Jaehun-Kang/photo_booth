@@ -13,6 +13,7 @@ function FilterScreenRender({ filterIndex, onBack }) {
   const [videoSize, setVideoSize] = useState({ width: 0, height: 0 });
   const [countdown, setCountdown] = useState(null);
   const [showFlash, setShowFlash] = useState(false);
+  const [captureProgress, setCaptureProgress] = useState(null);
 
   useEffect(() => {
     const p5video = document.createElement('video');
@@ -69,16 +70,17 @@ function FilterScreenRender({ filterIndex, onBack }) {
     return filters.map(filter => getSketchFactory(filter));
   }, [videoReady, getSketchFactory]);
 
-  // 선택한 필터 하나만 렌더링
+  // 필터 오류 반환
   if (
     typeof filterIndex !== 'number' ||
-    filterIndex < 0 ||
-    filterIndex >= filters.length
+    filterIndex < 0 || filterIndex >= filters.length
   ) {
     return (
       <div style={{ padding: '1rem', textAlign: 'center' }}>
         <p>유효하지 않은 필터입니다.</p>
-        <button onClick={onBack}>←</button>
+        <button className='btn_back' onClick={onBack}>
+          <img className='btn_back--img' src={backIcon} alt="Back" />
+        </button>
       </div>
     );
   }
@@ -87,29 +89,48 @@ function FilterScreenRender({ filterIndex, onBack }) {
     return <p>loading...</p>;
   }
 
-  // 카운트다운 시작
-  const handleCaptureStart = () => {
-    let count = 10;
-    setCountdown(count);
-    const interval = setInterval(() => {
-      count--;
-      if (count >= 1) {
-        setCountdown(count);
-      } else {
-        clearInterval(interval);
-        setCountdown(null);
-        setShowFlash(true);
-        setTimeout(() => setShowFlash(false), 200);
-        //저장 로직 들어갈 곳..
-      }
-    }, 1000);
+  // 촬영 4번 반복
+  const handleCaptureStart = async () => {
+    setCaptureProgress(0);
+    for (let i = 0; i < 4; i++) {
+      await runSingleCapture();
+      setCaptureProgress(i + 1);
+    }
+    setCaptureProgress(null);
   };
+
+  // 촬영 함수
+  function runSingleCapture() {
+    return new Promise((resolve) => {
+      let count = 10;
+      setCountdown(count);
+
+      const interval = setInterval(() => {
+        count--;
+        if (count >= 1) {
+          setCountdown(count);
+        } else {
+          clearInterval(interval);
+          setCountdown(null);
+          setShowFlash(true);
+          setTimeout(() => {
+            setShowFlash(false);
+            // 저장 코드 들어갈 곳
+            resolve();
+          }, 200);
+        }
+      }, 1000);
+    });
+  }
+
 
   return (
     <div>
-      <button className='btn_back' onClick={onBack}>
-        <img className='btn_back--img' src={backIcon} alt="Back" />
-      </button>
+      {captureProgress === null && (
+        <button className='btn_back' onClick={onBack}>
+          <img className='btn_back--img' src={backIcon} alt="Back" />
+        </button>
+      )}
       <div className='cam_screen--section'>
         <div className='cam_screen--section--container'>
           <FilterScreen
@@ -122,6 +143,7 @@ function FilterScreenRender({ filterIndex, onBack }) {
         onStartCapture={handleCaptureStart}
         countdown={countdown}
         showFlash={showFlash}
+        captureProgress={captureProgress}
       />
     </div>
   );

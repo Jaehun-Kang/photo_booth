@@ -17,6 +17,7 @@ export function createScreenSketch({
       const w = h * videoAspect;
       captureH = Math.round(captureW / videoAspect);
 
+      p5js.pixelDensity(1);
       p5js.createCanvas(w, h);
       offscreen = p5js.createGraphics(captureW, captureH);
 

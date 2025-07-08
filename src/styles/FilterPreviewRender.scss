@@ -2,8 +2,8 @@
   display: grid;
   grid-template-rows: auto 1fr auto;
   width: 100%;
-  min-width: 620px;
-  max-width: 2600px;
+  min-width: 38.75rem;
+  max-width: 162.5rem;
   height: 100vh;
   margin-inline: auto;
 }
@@ -12,8 +12,8 @@
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
-  padding-top: 20px;
-  padding-inline: 40px;
+  padding-top: 1.25rem;
+  padding-inline: 2.5rem;
 
   h1 {
   font-size: 3rem;
@@ -23,7 +23,7 @@
 
   img {
     aspect-ratio: 1 / 1;
-    width: 130px;
+    width: 8.125rem;
   }
 }
 
@@ -38,14 +38,14 @@
     display: grid;
     max-height: 100%;
     margin-block: auto;
-    padding-inline: 40px;
+    padding-inline: 2.5rem;
     grid-template-columns: repeat(4, 1fr); //필요 시 수정
-    gap: 20px;
+    gap: 0.8vw;
 
     &--filter {
       aspect-ratio: 16 / 9;
-      border-radius: 4px;
-      border: .75px solid rgba(255, 255, 255, 0);
+      border-radius: .25rem;
+      border: .0469rem solid rgba(255, 255, 255, 0);
       overflow: hidden;
     }
 
@@ -57,13 +57,13 @@
 }
 
 .footer {
-  padding-inline: 40px;
-  padding-bottom: 32px;
+  padding-inline: 2.5rem;
+  padding-bottom: 2rem;
 
   p {
   font-size: 2rem;
   font-weight: 200;
   text-align: center;
-  margin-block: 20px;
+  margin-block: 1.25rem;
   }
 }
