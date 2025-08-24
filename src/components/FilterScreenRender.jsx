@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import html2canvas from 'html2canvas';
 import FilterScreen from './FilterScreen.jsx';
 import Overlay from './Overlay.jsx';
+import logo from '../assets/logo.svg';
 import { createScreenSketch } from '../filters/createScreenSketch.js';
 import { filters } from '../filters';
 import backIcon from '../assets/arrow_left.svg';
@@ -157,32 +158,38 @@ function FilterScreenRender({ filterIndex, onBack }) {
     return (
       <div className='result'>
         <div className='result-container' onClick={handleSave} title='Save'>
-          <div>
             <div className="result-frame">
               {images.map((src, idx) => (
                 <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
               ))}
             </div>
-          </div>
+            <div className='result-logo'>
+              <img className='result-logo-svg' src={logo} alt="" />
+              <div className='result-logo-text'>마법연구회</div>
+            </div>
         </div>
         <div className='forSave' ref={resultRef}>
           <div className='result-container'>
-            <div>
               <div className="result-frame">
                 {images.map((src, idx) => (
                   <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
                 ))}
               </div>
+              <div className='result-logo'>
+              <img className='result-logo-svg' src={logo} alt="" />
+              <div className='result-logo-text'>마법연구회</div>
             </div>
           </div>
           <div className='result-container'>
-            <div>
               <div className="result-frame">
                 {images.map((src, idx) => (
                   <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
                 ))}
               </div>
-            </div>
+              <div className='result-logo'>
+                <img className='result-logo-svg' src={logo} alt="" />
+                <div className='result-logo-text'>마법연구회</div>
+              </div>
           </div>
         </div>
         <button className='btn_back' onClick={onBack}>

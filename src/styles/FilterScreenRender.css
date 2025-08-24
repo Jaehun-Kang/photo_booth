@@ -55,10 +55,9 @@
 }
 .result-container {
   display: grid;
-  width: 6.5cm;
-  height: 16.5cm;
-  aspect-ratio: 6.5/16.5;
-  padding-top: 20px;
+  width: 5cm;
+  height: 14.8cm;
+  padding-top: 10px;
   padding-inline: 10px;
   background: black;
   cursor: pointer;
