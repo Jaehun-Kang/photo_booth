@@ -20,10 +20,10 @@ URL: https://jaehun-kang.github.io/photo_booth/
 
 ### 🛠 사용 기술
 
-- **React** – UI 컴포넌트 구성
-- **Vite** – 빠른 개발 서버 및 번들링
-- **p5.js** – 필터 및 시각 효과 구현
-- **MediaDevices API** – 카메라 스트리밍
+- **React**
+- **Vite**
+- **p5.js**
+- **MediaDevices API**
 
 
 
@@ -58,5 +58,4 @@ src/
 
 ### Todo
 
-- [ ] 사진 저장 및 다운로드
 - [ ] 프린트 요청
