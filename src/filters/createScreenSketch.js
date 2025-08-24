@@ -33,29 +33,17 @@ export function createScreenSketch({
       }
 
       const ctx = offscreen.drawingContext;
-      ctx.save();
+      if (!ctx || !video) return;
+
       ctx.clearRect(0, 0, captureW, captureH);
-      ctx.translate(captureW, 0);
-      ctx.scale(-1, 1);
+      ctx.setTransform(-1, 0, 0, 1, captureW, 0);
       ctx.drawImage(video, 0, 0, captureW, captureH);
-      ctx.restore();
 
       offscreen.loadPixels();
+
       if (!offscreen.pixels || offscreen.pixels.length < 4 * captureW * captureH) return;
 
-      const drawHeight = p5js.height;
-      const drawWidth = p5js.width;
-      const offsetX = 0;
-      const offsetY = 0;
-
-      filter.draw(
-        p5js,
-        offscreen,
-        drawWidth,
-        drawHeight,
-        captureW,
-        captureH
-      );
+      filter.draw(p5js, offscreen, width, height, captureW, captureH);
     };
 
   };

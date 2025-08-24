@@ -26,12 +26,9 @@ export function createFilteredSketch({
       const ctx = offscreen.drawingContext;
       if (!ctx || !video) return;
 
-      ctx.save();
       ctx.clearRect(0, 0, captureW, captureH);
-      ctx.translate(captureW, 0);
-      ctx.scale(-1, 1);
+      ctx.setTransform(-1, 0, 0, 1, captureW, 0);
       ctx.drawImage(video, 0, 0, captureW, captureH);
-      ctx.restore();
 
       offscreen.loadPixels();
       if (!offscreen.pixels || offscreen.pixels.length < 4 * captureW * captureH) return;
