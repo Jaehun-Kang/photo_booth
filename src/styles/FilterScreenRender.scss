@@ -7,14 +7,14 @@
 
 .btn_back{
   position: absolute;
-  width: 48px;
-  top: 4px;
-  left: 4px;
-  opacity: .5;
+  width: 32px;
+  top: 10px;
+  left: 10px;
+  opacity: .7;
   z-index: 10;
   justify-items: center;
   align-items: center;
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(22.71, 69.44, 193.6);
   border: none;
   border-radius: 99px;
   aspect-ratio: 1 / 1;
@@ -25,20 +25,21 @@
   }
   
   &--img {
+    display: block;
     margin: auto;
-    width: 32px;
+    width: 97%;
     aspect-ratio: 1 / 1;
   }
 }
 
 .cam_screen--section {
-  width: 100%;
-  height: 100vh;
+  display: grid;
+  justify-content: center;
 
   &--container {
-    display: grid;
-    justify-content: center;
-    align-items: center;
+    width: min(100%, calc(100vh * 364/242));
+    height: min(100%, calc(100vw * 242/364));
+    aspect-ratio: 364 / 242;
   }
 }
 
@@ -47,24 +48,31 @@
   height: 100vh;
   justify-content: center;
   align-items: center;
-  background-color: rgb(44, 44, 44);
+  background-color: rgb(22.71, 69.44, 193.6);
 
   .forSave {
     display: grid;
     grid-template-columns: repeat(2, 50%);
     position: absolute;
-    scale: 10;
+    left: -9999px;
+    top: 0;
+    scale: 1;
     z-index: -1;
   }
 
   &-container {
     display: grid;
-    width: 5cm;
-    height: 14.8cm;
-    // aspect-ratio: 5 / 14.8;
-    padding-top: 10px;
-    padding-inline: 10px;
-    background: black;
+    grid-template-rows: auto 1fr;
+    align-items: center;
+    gap: 20px;
+    scale: 1; //모니터 크기에 맞게 배율 변경할 것
+    height: 1200px;
+    // width: 5cm;
+    // height: 14.8cm;
+    aspect-ratio: 400 / 1200;
+    padding-top: 20px;
+    padding-inline: 18px;
+    background: rgb(255, 255, 255);
     cursor: pointer;
   }
 
@@ -72,13 +80,55 @@
     display: grid;
     margin-inline: auto;
     grid-template-rows: repeat(4, 1fr);
-    gap: 10px;
+    gap: 16px;
   
     img {
-      width: 100%;
-      height: auto;
-      object-fit: contain;
+      width: 364px;
+      height: 242px;
+      object-fit: cover;
       display: block;
+
+      // width: 100%;
+      // height: auto;
+      // object-fit: contain;
+      // display: block;
+    }
+  }
+
+  &-logo {
+    display: grid;
+    grid-template-columns: min-content min-content;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+    column-gap: 24px;
+    padding-bottom: 12px;
+    width: 100%;
+    height: min-content;
+    color: rgb(0.21, 50.42, 225.59);
+    
+    
+    &-svg {
+      width: 108px;
+    }
+    
+    &-text {
+      position: relative;
+      padding-bottom: 14px;
+      word-break: keep-all;
+      font-size: 38px;
+      font-family: 'PyeongChangPeace-Light', sans-serif;
+      font-weight: 600;
+
+      &-date {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        line-height: 100%;
+        font-size: 16px;
+        font-weight: 400;
+        font-family: sans-serif;
+      }
     }
   }
 }

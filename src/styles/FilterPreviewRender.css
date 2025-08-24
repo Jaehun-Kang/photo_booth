@@ -15,14 +15,41 @@
   padding-top: 1.25rem;
   padding-inline: 2.5rem;
 }
-.header h1 {
-  font-size: 3rem;
-  font-weight: 400;
-  text-align: right;
+.header .logo {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  align-items: center;
+  gap: 20px;
 }
-.header img {
+.header .logo--img {
   aspect-ratio: 1/1;
   width: 8.125rem;
+  display: block;
+}
+.header .logo--text {
+  font-family: "PyeongChangPeace-Light";
+  font-size: 3rem;
+  font-weight: 400;
+  margin-bottom: 8%;
+}
+.header .camera-buttons {
+  display: grid;
+  gap: 0.4vw;
+  margin-left: auto;
+}
+.header .camera-buttons .camera-button {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgb(0.21, 50.42, 225.59);
+  border-radius: 99px;
+  background-color: transparent;
+  color: rgb(0.21, 50.42, 225.59);
+  font-size: 0.875rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+.header .camera-buttons .camera-button.selected {
+  background-color: rgb(0.21, 50.42, 225.59);
+  color: #fff;
 }
 
 .cam_grid--section {
@@ -40,14 +67,14 @@
   gap: 0.8vw;
 }
 .cam_grid--section--container--filter {
-  aspect-ratio: 16/9;
+  aspect-ratio: 364/242;
   border-radius: 0.25rem;
-  border: 0.0469rem solid rgba(255, 255, 255, 0);
+  border: 2px solid rgb(63.84, 117.94, 245.48);
   overflow: hidden;
 }
 .cam_grid--section--container--filter:hover {
   cursor: pointer;
-  border-color: rgba(255, 255, 255, 0.5);
+  border-color: rgb(0.21, 50.42, 225.59);
 }
 
 .footer {
@@ -56,7 +83,7 @@
 }
 .footer p {
   font-size: 2rem;
-  font-weight: 200;
+  font-weight: 400;
   text-align: center;
   margin-block: 1.25rem;
 }/*# sourceMappingURL=FilterPreviewRender.css.map */

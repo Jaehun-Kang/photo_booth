@@ -2,13 +2,12 @@ import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import html2canvas from 'html2canvas';
 import FilterScreen from './FilterScreen.jsx';
 import Overlay from './Overlay.jsx';
-import logo from '../assets/logo.svg';
 import { createScreenSketch } from '../filters/createScreenSketch.js';
 import { filters } from '../filters';
 import backIcon from '../assets/arrow_left.svg';
 import '../styles/FilterScreenRender.css';
 
-function FilterScreenRender({ filterIndex, onBack }) {
+function FilterScreenRender({ filterIndex, onBack, selectedDeviceId, onError }) {
   const [video, setVideo] = useState(null);
   const [videoReady, setVideoReady] = useState(false);
   const [webcamError, setWebcamError] = useState(null);
@@ -21,43 +20,53 @@ function FilterScreenRender({ filterIndex, onBack }) {
 
 
   useEffect(() => {
-    const p5video = document.createElement('video');
-    navigator.mediaDevices.getUserMedia({
-      video: {
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-      },
-    }).then((stream) => {
-      p5video.srcObject = stream;
-      p5video.play();
-      p5video.width = 64;
-      p5video.height = 36;
-      p5video.style.display = 'none';
-      document.body.appendChild(p5video);
+    const setupCamera = async () => {
+      try {
+        const p5video = document.createElement('video');
+        navigator.mediaDevices.getUserMedia({
+          video: {
+            deviceId: selectedDeviceId ? { exact: selectedDeviceId } : undefined,
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+        }).then((stream) => {
+          p5video.srcObject = stream;
+          p5video.play();
 
-      const onLoadedMetadata = () => {
-        setVideo(p5video);
-        setVideoReady(true);
-        p5video.removeEventListener('loadedmetadata', onLoadedMetadata);
-      };
+          const onLoadedMetadata = () => {
+            console.log('Video size:', p5video.videoWidth, p5video.videoHeight);
+            setVideo(p5video);
+            setVideoSize({  // videoSize 상태 설정 추가
+              width: p5video.videoWidth,
+              height: p5video.videoHeight,
+            });
+            setVideoReady(true);
+            p5video.removeEventListener('loadedmetadata', onLoadedMetadata);
+          };
 
-      if (p5video.readyState >= 2) {
-        onLoadedMetadata();
-      } else {
-        p5video.addEventListener('loadedmetadata', onLoadedMetadata);
-      }
-    }).catch(err => {
-      console.error('웹캠 접근 오류:', err);
-      setWebcamError(err);
-    });
+          if (p5video.readyState >= 2) {
+            onLoadedMetadata();
+          } else {
+            p5video.addEventListener('loadedmetadata', onLoadedMetadata);
+          }
+        }).catch(err => {
+          console.error('웹캠 접근 오류:', err);
+          setWebcamError(err);
+        });
 
-    return () => {
-      if (p5video && p5video.srcObject) {
-        p5video.srcObject.getTracks().forEach(track => track.stop());
-        p5video.remove();
+        return () => {
+          if (p5video && p5video.srcObject) {
+            p5video.srcObject.getTracks().forEach(track => track.stop());
+          }
+        };
+      } catch (err) {
+        console.error('카메라 설정 오류:', err);
+        onError && onError(err);
       }
     };
-  }, []);
+
+    setupCamera();
+  }, [selectedDeviceId, onError]);
 
   // video와 videoReady 상태가 바뀌면 메모이제이션된 sketchFactory 반환
   const getSketchFactory = useCallback(
@@ -144,10 +153,22 @@ function FilterScreenRender({ filterIndex, onBack }) {
     const handleSave = async () => {
       if (!resultRef.current) return;
 
+      await Promise.all(
+        Array.from(resultRef.current.querySelectorAll('img')).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(res => { img.onload = res; img.onerror = res; });
+        })
+      );
+
+      const originalScale = resultRef.current.style.scale;
+      resultRef.current.style.scale = '1';
+
       const canvas = await html2canvas(resultRef.current, {
-        scale: window.devicePixelRatio,
+        scale: window.devicePixelRatio * 2,
         useCORS: true,
       });
+
+      resultRef.current.style.scale = originalScale;
 
       const link = document.createElement('a');
       link.href = canvas.toDataURL('image/png');
@@ -155,41 +176,58 @@ function FilterScreenRender({ filterIndex, onBack }) {
       link.click();
     };
 
+
     return (
       <div className='result'>
         <div className='result-container' onClick={handleSave} title='Save'>
+          <div className="result-frame">
+            {images.map((src, idx) => (
+              <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
+            ))}
+          </div>
+          <div className='result-logo'>
+            <InlineLogoSVG className='result-logo-svg' />
+            <div className='result-logo-text'>
+              마법연구회
+              <div className='result-logo-text-date'>
+                {`${new Date().getFullYear()}.${String(new Date().getMonth() + 1).padStart(2,'0')}.${String(new Date().getDate()).padStart(2,'0')}`}
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* 저장용 : 위 result-container 2개 넣어야함 */}
+        <div className='forSave' ref={resultRef}>
+          <div className='result-container'>
             <div className="result-frame">
               {images.map((src, idx) => (
                 <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
               ))}
             </div>
             <div className='result-logo'>
-              <img className='result-logo-svg' src={logo} alt="" />
-              <div className='result-logo-text'>마법연구회</div>
-            </div>
-        </div>
-        <div className='forSave' ref={resultRef}>
-          <div className='result-container'>
-              <div className="result-frame">
-                {images.map((src, idx) => (
-                  <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
-                ))}
+              <InlineLogoSVG className='result-logo-svg' />
+              <div className='result-logo-text'>
+                마법연구회
+                <div className='result-logo-text-date'>
+                  {`${new Date().getFullYear()}.${String(new Date().getMonth() + 1).padStart(2,'0')}.${String(new Date().getDate()).padStart(2,'0')}`}
+                </div>
               </div>
-              <div className='result-logo'>
-              <img className='result-logo-svg' src={logo} alt="" />
-              <div className='result-logo-text'>마법연구회</div>
             </div>
           </div>
           <div className='result-container'>
-              <div className="result-frame">
-                {images.map((src, idx) => (
-                  <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
-                ))}
+            <div className="result-frame">
+              {images.map((src, idx) => (
+                <img key={idx} src={src} alt={`촬영 ${idx + 1}`} />
+              ))}
+            </div>
+            <div className='result-logo'>
+              <InlineLogoSVG className='result-logo-svg' />
+              <div className='result-logo-text'>
+                마법연구회
+                <div className='result-logo-text-date'>
+                  {`${new Date().getFullYear()}.${String(new Date().getMonth() + 1).padStart(2,'0')}.${String(new Date().getDate()).padStart(2,'0')}`}
+                </div>
               </div>
-              <div className='result-logo'>
-                <img className='result-logo-svg' src={logo} alt="" />
-                <div className='result-logo-text'>마법연구회</div>
-              </div>
+            </div>
           </div>
         </div>
         <button className='btn_back' onClick={onBack}>
@@ -230,6 +268,25 @@ function FilterScreenRender({ filterIndex, onBack }) {
         captureProgress={captureProgress}
       />
     </div>
+  );
+}
+
+function InlineLogoSVG(props) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" {...props}>
+      <g id="logo1">
+        {/* 십자형 두 패스를 정확히 하나로 합침 */}
+        <path
+          fill="rgb(0.21, 50.42, 225.59)"
+          d="
+            M500,927c0-477-5-495-113-495,108,0,113,0,113-360
+            M500,927c0-477,5-495,113-495-108,0-113,0-113-360
+          "
+        />
+        <path fill="rgb(0.21, 50.42, 225.59)" d="M178.72,549,19,434A2.5,2.5,0,0,1,19,430L178.72,315c-39.34,35.29-61.42,75-61.42,117S139.38,513.71,178.72,549Z"/>
+        <path fill="rgb(0.21, 50.42, 225.59)" d="M820.28,549,980,434a2.5,2.5,0,0,0,0-4.06L820.28,315c39.34,35.29,61.42,75,61.42,117S859.62,513.71,820.28,549Z"/>
+      </g>
+    </svg>
   );
 }
 

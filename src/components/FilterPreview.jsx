@@ -153,10 +153,7 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
       onClick={onSelectFilter}
       style={{
         width: '100%',
-        aspectRatio:
-          video && video.videoWidth && video.videoHeight
-            ? `${video.videoWidth} / ${video.videoHeight}`
-            : '4 / 3',
+        aspectRatio: '364 / 242', // ← 비율 고정
         position: 'relative',
         backgroundColor: '#111',
       }}

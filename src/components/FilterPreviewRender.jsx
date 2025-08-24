@@ -1,53 +1,95 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import FilterPreview from './FilterPreview.jsx';
-import logo from '../assets/logo.svg';
+import logo from '../assets/logo_blue.svg';
 import { createFilteredSketch } from '../filters/createFilteredSketch.js';
 import { filters } from '../filters';
 import '../styles/FilterPreviewRender.css';
 import WebcamErrorHandler from './WebcamErrorHandler.jsx';
+import CameraSelect from './CameraSelect.jsx';
 
-
-function FilterPreviewRender({ onSelectFilter }) {
+function FilterPreviewRender({ onSelectFilter, selectedDeviceId, onDeviceSelect, onVideoReady, onError }) {
   const [video, setVideo] = useState(null);
   const [videoReady, setVideoReady] = useState(false);
   const [webcamError, setWebcamError] = useState(null);
   const [videoSize, setVideoSize] = useState({ width: 0, height: 0 });
+  const videoRef = useRef(null);
+  const streamRef = useRef(null);
+
+  const setupCamera = useCallback(async () => {
+    // 이전 스트림 정리
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+
+    if (!selectedDeviceId) return;
+
+    try {
+      setVideoReady(false);
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          deviceId: { exact: selectedDeviceId },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        }
+      });
+
+      streamRef.current = stream;
+      const videoElement = document.createElement('video');
+      videoElement.srcObject = stream;
+      videoElement.playsInline = true;
+
+      // 비디오 로드 완료 대기
+      await new Promise((resolve, reject) => {
+        videoElement.onloadedmetadata = () => {
+          videoElement.play()
+            .then(resolve)
+            .catch(reject);
+        };
+        videoElement.onerror = reject;
+      });
+
+      // 성공적으로 로드된 경우에만 상태 업데이트
+      await videoElement.play();
+      
+      // 비디오 해상도 로깅
+      console.log('Preview Video Resolution:', {
+        width: videoElement.videoWidth,
+        height: videoElement.videoHeight,
+        actualWidth: videoElement.width,
+        actualHeight: videoElement.height
+      });
+
+      setVideo(videoElement);
+      setVideoSize({
+        width: videoElement.videoWidth,
+        height: videoElement.videoHeight,
+      });
+      setVideoReady(true);
+      videoRef.current = videoElement;
+      onVideoReady && onVideoReady();
+
+    } catch (err) {
+      console.error('카메라 설정 오류:', err);
+      onError && onError(err);
+      setWebcamError(err);
+    }
+  }, [selectedDeviceId, onVideoReady, onError]);
 
   useEffect(() => {
-    const p5video = document.createElement('video');
-    navigator.mediaDevices.getUserMedia({
-      video: {
-        width: { ideal: 1280 },
-        height: { ideal: 720 }, // 36 혹은 48
-      },
-    }).then((stream) => {
-      p5video.srcObject = stream;
-      p5video.play();
-      p5video.width = 64;
-      p5video.height = 36;
-      p5video.style.display = 'none';
-      document.body.appendChild(p5video);
+    setupCamera();
 
-      const onLoadedMetadata = () => {
-        setVideo(p5video);
-        setVideoSize({
-          width: p5video.videoWidth,
-          height: p5video.videoHeight,
-        });
-        setVideoReady(true);
-        p5video.removeEventListener('loadedmetadata', onLoadedMetadata);
-      };
-
-      if (p5video.readyState >= 2) {
-        onLoadedMetadata();
-      } else {
-        p5video.addEventListener('loadedmetadata', onLoadedMetadata);
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
       }
-    }).catch((err) => {
-      console.error('웹캠 접근 오류:', err);
-      setWebcamError(err);
-    });
-  }, []);
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+    };
+  }, [selectedDeviceId, setupCamera]);
 
   const getSketchFactory = useCallback(
     (filter) => (w, h) => {
@@ -67,23 +109,27 @@ function FilterPreviewRender({ onSelectFilter }) {
     <div className="main">
       <WebcamErrorHandler error={webcamError} />
       <div className="header">
-        <img src={logo} alt="Logo" />
-        <h1>MAGIC RESEARCH</h1>
+        <div className='logo'>
+          <img className='logo--img' src={logo} alt="Logo" />
+          <div className='logo--text'>마법연구회</div>
+        </div>
+        <CameraSelect 
+          onDeviceSelect={onDeviceSelect}
+          selectedDevice={selectedDeviceId}
+        />
       </div>
       <div className="cam_grid--section">
         <div className="cam_grid--section--container">
           {videoReady &&
-            sketchFactories.map((sketchFactory, index) => {
-              return (
-                <div className="cam_grid--section--container--filter" key={index}>
-                  <FilterPreview 
+            sketchFactories.map((sketchFactory, index) => (
+              <div className="cam_grid--section--container--filter" key={index}>
+                <FilterPreview 
                   sketchFactory={sketchFactory} 
                   video={video}
                   onSelectFilter={() => onSelectFilter(index)}
-                  />
-                </div>
-              );
-            })}
+                />
+              </div>
+            ))}
         </div>
       </div>
       <div className="footer">
