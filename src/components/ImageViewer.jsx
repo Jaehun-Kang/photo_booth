@@ -47,8 +47,12 @@ const ImageViewer = () => {
         console.log('🔗 Base64 디코딩된 Firebase URL:', decodedFirebaseUrl);
         console.log('🧪 Firebase URL 유효성 체크:', decodedFirebaseUrl.startsWith('https://firebasestorage.googleapis.com'));
         
-        setImageData(decodedFirebaseUrl);
-        console.log('📱 Base64 방식으로 Firebase Storage URL 로드 완료');
+        // CORS 프록시를 통한 이미지 로딩 시도
+        const corsProxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(decodedFirebaseUrl)}`;
+        console.log('🌐 CORS 프록시 URL 생성:', corsProxyUrl);
+        
+        setImageData(corsProxyUrl);
+        console.log('📱 CORS 프록시를 통한 Firebase Storage URL 로드 완료');
       } catch (error) {
         console.error('❌ Base64 디코딩 실패:', error);
         console.log('🔧 원본 firebaseUrlParam:', firebaseUrlParam);
