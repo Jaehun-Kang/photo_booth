@@ -2,38 +2,44 @@
   height: 100vh;
   height: 100dvh;
   background-color: rgb(22.71, 69.44, 193.6);
-  display: grid;
-  grid-template-rows: min-content 1fr min-content;
-  justify-content: center;
-  padding: 10px 0;
+  position: relative;
   font-family: "Arial", sans-serif;
   box-sizing: border-box;
   overflow: hidden;
 }
 @media (max-width: 768px) {
   .image-viewer {
-    padding: 5px;
     width: 100vw;
   }
 }
 .image-viewer__header {
-  text-align: center;
-  margin-bottom: -20px;
-  flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: 10vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(22.71, 69.44, 193.6);
+  z-index: 10;
+  box-sizing: border-box;
+  padding: 0 20px;
 }
 .image-viewer__header .result-logo {
-  display: grid;
-  grid-template-columns: min-content min-content;
+  display: flex;
   align-items: center;
-  justify-items: center;
   justify-content: center;
-  -moz-column-gap: 24px;
-       column-gap: 24px;
-  padding-bottom: 8px;
+  gap: 8px;
   width: 100%;
-  height: -moz-min-content;
-  height: min-content;
+  height: 100%;
   color: white;
+}
+@media (max-width: 768px) {
+  .image-viewer__header .result-logo {
+    gap: 11.2px;
+  }
 }
 .image-viewer__header .result-logo-svg {
   width: 100px;
@@ -45,28 +51,30 @@
 }
 .image-viewer__header .result-logo-text {
   position: relative;
-  margin-bottom: 8%;
-  padding-bottom: 0;
   word-break: keep-all;
   font-size: 34px;
   font-family: "PyeongChangPeace-Light", "Malgun Gothic", "Nanum Gothic", sans-serif;
   font-weight: 400;
   font-display: swap;
+  margin-bottom: 8px;
 }
 @media (max-width: 768px) {
   .image-viewer__header .result-logo-text {
     font-size: 46px;
+    margin-bottom: 11.2px;
   }
 }
 .image-viewer__image {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 10vh;
+  bottom: 10vh;
+  left: 0;
+  right: 0;
   display: flex;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
   overflow: visible;
-  min-height: 200px;
   padding: 12px;
 }
 .image-viewer__image--img {
@@ -84,21 +92,28 @@
   transition: filter 0.3s ease;
 }
 .image-viewer__buttons {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: 10vh;
   display: grid;
   grid-template-columns: 1fr auto;
+  align-items: center;
+  justify-content: center;
   gap: 16px;
-  width: 100%;
-  justify-self: center;
-  padding-block: 32px 10px;
-  flex-shrink: 0;
-  min-height: 80px;
+  background-color: rgb(22.71, 69.44, 193.6);
+  z-index: 10;
+  box-sizing: border-box;
+  padding-inline: 20px;
+  padding-bottom: 20px;
 }
 @media (max-width: 768px) {
   .image-viewer__buttons {
     gap: 24px;
-    padding-block: 45px 20px;
-    min-height: 120px;
     padding-inline: 15px;
+    padding-bottom: 15px;
   }
 }
 .image-viewer__buttons--btn {
@@ -114,6 +129,7 @@
   justify-content: center;
   gap: 0.5rem;
   border: none;
+  height: 100%;
 }
 @media (max-width: 768px) {
   .image-viewer__buttons--btn {

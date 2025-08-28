@@ -1,37 +1,45 @@
 .image-viewer {
   height: 100vh;
-  height: 100dvh; // 동적 뷰포트 높이 (모바일에서 더 정확)
+  height: 100dvh; // 동적 뷰포트 높이 사용
   background-color: rgb(22.71, 69.44, 193.6);
-  display: grid;
-  grid-template-rows: min-content 1fr min-content; // 헤더, 이미지, 버튼 3영역
-  justify-content: center;
-  padding: 10px 0;
+  position: relative; // 그리드 대신 relative 포지셔닝
   font-family: 'Arial', sans-serif;
   box-sizing: border-box;
-  overflow: hidden; // 스크롤 방지
+  overflow: hidden;
   
-  // 모바일에서 전체 너비 활용
+  // 모바일에서 전체 너비 사용
   @media (max-width: 768px) {
-    padding: 5px;
     width: 100vw;
   }
 
   &__header {
-    text-align: center;
-    margin-bottom: -20px;
-    flex-shrink: 0; // 크기 고정
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100vw; // 전체 뷰포트 너비
+    height: 10vh; // 상단 10% 차지
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(22.71, 69.44, 193.6);
+    z-index: 10;
+    box-sizing: border-box;
+    padding: 0 20px;
 
     .result-logo {
-      display: grid;
-      grid-template-columns: min-content min-content;
+      display: flex;
       align-items: center;
-      justify-items: center;
       justify-content: center;
-      column-gap: 24px;
-      padding-bottom: 8px;
+      gap: calc(100px * 0.08); // 로고 높이의 8%를 gap으로 사용 (데스크톱)
       width: 100%;
-      height: min-content;
+      height: 100%;
       color: white;
+      
+      // 모바일에서 gap 조정
+      @media (max-width: 768px) {
+        gap: calc(140px * 0.08); // 모바일 로고 높이의 8%
+      }
 
       &-svg {
         width: 100px;
@@ -44,31 +52,33 @@
 
       &-text {
         position: relative;
-        margin-bottom: 8%;
-        padding-bottom: 0;
         word-break: keep-all;
         font-size: 34px;
         font-family: 'PyeongChangPeace-Light', 'Malgun Gothic', 'Nanum Gothic', sans-serif;
         font-weight: 400;
         font-display: swap;
+        margin-bottom: calc(100px * 0.08); // 로고 높이의 8%를 margin-bottom으로
         
         // 모바일에서 더 크게
         @media (max-width: 768px) {
           font-size: 46px; // 기존 40px에서 46px로 증가
+          margin-bottom: calc(140px * 0.08); // 모바일 로고 높이의 8%
         }
       }
     }
   }
 
   &__image {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    top: 10vh; // 헤더 아래부터
+    bottom: 10vh; // 버튼 위까지
+    left: 0;
+    right: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
     overflow: visible; // 그림자가 잘리지 않도록 변경
-    min-height: 200px; // 최소 높이 보장
     padding: 12px; // 그림자를 위한 여백
     
     &--img {
@@ -88,21 +98,28 @@
   }
 
   &__buttons {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100vw; // 전체 뷰포트 너비
+    height: 10vh; // 하단 10% 차지
     display: grid;
     grid-template-columns: 1fr auto;
+    align-items: center;
+    justify-content: center;
     gap: 16px;
-    width: 100%;
-    justify-self: center;
-    padding-block: 32px 10px;
-    flex-shrink: 0; // 크기 고정
-    min-height: 80px; // 최소 높이 보장
+    background-color: rgb(22.71, 69.44, 193.6);
+    z-index: 10;
+    box-sizing: border-box;
+    padding-inline: 20px;
+    padding-bottom: 20px;
     
     // 모바일에서 더 큰 간격과 전체 너비 활용
     @media (max-width: 768px) {
       gap: 24px; // 기존 20px에서 24px로 증가
-      padding-block: 45px 20px; // 기존 40px 15px에서 45px 20px로 증가
-      min-height: 120px; // 기존 100px에서 120px로 증가
-      padding-inline: 15px; // 좌우 패딩 추가로 전체 너비 활용
+      padding-inline: 15px;
+      padding-bottom: 15px;
     }
     
     &--btn {
@@ -118,6 +135,7 @@
       justify-content: center;
       gap: .5rem;
       border: none;
+      height: 100%; // 부모 높이에 맞춤
       
       // 모바일에서 더 큰 크기
       @media (max-width: 768px) {
