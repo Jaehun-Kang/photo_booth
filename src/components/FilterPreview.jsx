@@ -99,7 +99,9 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
         canvases.forEach(canvas => canvas.remove());
       }
 
-      const sketch = sketchFactory(size.width, size.height);
+      const canvasWidth = containerRef.current.clientWidth;
+      const canvasHeight = containerRef.current.clientHeight;
+      const sketch = sketchFactory(canvasWidth, canvasHeight);
       p5InstanceRef.current = new p5(sketch, containerRef.current);
 
       setReady(true);
@@ -153,7 +155,7 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
       onClick={onSelectFilter}
       style={{
         width: '100%',
-        aspectRatio: '364 / 242', // ← 비율 고정
+        aspectRatio: '3 / 2', // ← 비율 고정
         position: 'relative',
         backgroundColor: '#111',
       }}

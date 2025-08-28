@@ -9,21 +9,22 @@ const FilterScreen = ({ sketchFactory, video }) => {
   const [size, setSize] = useState(null);
   const [ready, setReady] = useState(false);
 
-  // 비디오 비율에 맞춰 캔버스 크기 계산
+  // 비디오 비율에 맞춰 캔버스 크기 계산 (devicePixelRatio 적용)
   useEffect(() => {
     if (!video || !containerRef.current) return;
 
     const containerHeight = containerRef.current.clientHeight;
     const containerWidth = containerRef.current.clientWidth;
+    const pixelRatio = window.devicePixelRatio || 1;
 
     if (video.videoWidth && video.videoHeight) {
       const videoAspect = video.videoWidth / video.videoHeight;
-      const canvasHeight = containerHeight;
+      const canvasHeight = containerHeight * pixelRatio;
       const canvasWidth = canvasHeight * videoAspect;
 
       // 만약 계산된 width가 container보다 넓으면, width 기준으로 재계산
-      if (canvasWidth > containerWidth) {
-        const canvasWidthAlt = containerWidth;
+      if (canvasWidth > containerWidth * pixelRatio) {
+        const canvasWidthAlt = containerWidth * pixelRatio;
         const canvasHeightAlt = canvasWidthAlt / videoAspect;
         setSize({ width: canvasWidthAlt, height: canvasHeightAlt });
       } else {
@@ -32,7 +33,7 @@ const FilterScreen = ({ sketchFactory, video }) => {
     }
   }, [video]);
 
-  // ResizeObserver로 container 크기 감지 및 size 업데이트 (디바운스)
+  // ResizeObserver로 container 크기 감지 및 size 업데이트 (devicePixelRatio 적용)
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -41,9 +42,9 @@ const FilterScreen = ({ sketchFactory, video }) => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(() => {
         if (!video) return;
-        const height = containerRef.current.clientHeight; // 👈 height 기준
-        const ratio = video.videoWidth / video.videoHeight;
-        const width = height * ratio;
+        const pixelRatio = window.devicePixelRatio || 1;
+        const height = containerRef.current.clientHeight * pixelRatio;
+        const width = height * (video.videoWidth / video.videoHeight);
 
         setSize(prev =>
           prev &&
@@ -116,7 +117,7 @@ const FilterScreen = ({ sketchFactory, video }) => {
       ref={containerRef}
       style={{
         height: '100vh',
-        width: size ? `${size.width}px` : '100vw',
+        width: size ? `${size.width / (window.devicePixelRatio || 1)}px` : '100vw',
         margin: '0 auto',
         backgroundColor: '#000',
         position: 'relative',

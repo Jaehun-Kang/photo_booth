@@ -12,7 +12,7 @@ export function createScreenSketch({
     let readyCalled = false;
 
     p5js.setup = () => {
-      const targetAspect = 364 / 242;
+      const targetAspect = 3 / 2;
       const h = width / targetAspect;
       
       // 캡처 크기도 목표 비율로 설정
@@ -39,7 +39,7 @@ export function createScreenSketch({
       ctx.clearRect(0, 0, captureW, captureH);
 
       // 영상을 컨테이너 비율(364:242)로 맞추기
-      const targetRatio = 364 / 242;
+      const targetRatio = 3 / 2;
       const videoRatio = video.videoWidth / video.videoHeight;
       
       let sx, sy, sw, sh;

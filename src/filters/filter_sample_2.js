@@ -14,6 +14,7 @@ export const fadeFilter = {
     const expectedLength = 4 * captureW * captureH;
     if (!pixels || pixels.length < expectedLength) return;
 
+    // 캔버스 전체 크기에 맞춰 스케일링
     const scaleX = canvasW / captureW;
     const scaleY = canvasH / captureH;
     const baseDiameter = Math.min(scaleX, scaleY) * 5;

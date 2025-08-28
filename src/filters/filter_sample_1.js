@@ -7,8 +7,9 @@ export const circleFilter = {
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
     p5js.background(0);
 
-    const scaleX = canvasW / captureW;
-    const scaleY = canvasH / captureH;
+    // 스케일링을 반대로 계산
+    const scaleX = captureW / canvasW;
+    const scaleY = captureH / canvasH;
 
     const pixels = offscreen.pixels;
     const expectedLength = 4 * captureW * captureH;
@@ -23,12 +24,12 @@ export const circleFilter = {
 
         const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
 
-        const diameter = p5js.map(brightness, 0, 255, 1, Math.min(scaleX, scaleY)*10);
+        const diameter = p5js.map(brightness, 0, 255, 1, Math.max(scaleX, scaleY) * 10);
 
         p5js.fill(255);
         p5js.circle(
-          x * scaleX + scaleX * 5,
-          y * scaleY + scaleY * 5,
+          x / scaleX + 5 / scaleX,
+          y / scaleY + 5 / scaleY,
           diameter
         );
       }

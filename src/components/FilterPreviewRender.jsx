@@ -95,9 +95,16 @@ function FilterPreviewRender({ onSelectFilter, selectedDeviceId, onDeviceSelect,
     (filter) => (w, h) => {
       const scaleRatio = videoSize.width / videoSize.height;
 
-      return createFilteredSketch({ video, width: w, height: h, filter, scaleRatio, videoSize });
+      return createFilteredSketch({ 
+        video, 
+        width: w, 
+        height: h, 
+        filter, 
+        scaleRatio, 
+        videoSize
+      });
     },
-    [video, videoReady, videoSize]
+    [video, videoSize]
   );
 
   const sketchFactories = useMemo(() => {

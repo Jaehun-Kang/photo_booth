@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FilterPreviewRender from './components/FilterPreviewRender';
 import FilterScreenRender from './components/FilterScreenRender';
 import WebcamErrorHandler from './components/WebcamErrorHandler';
@@ -9,6 +9,24 @@ function App() {
   const [selectedDeviceId, setSelectedDeviceId] = useState(null);
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [webcamError, setWebcamError] = useState(null);
+  const [devicePixelRatio, setDevicePixelRatio] = useState(window.devicePixelRatio || 1);
+
+  // DPR 변화 감지 (디바이스 툴바 토글 시)
+  useEffect(() => {
+    const handleDPRChange = () => {
+      const newDPR = window.devicePixelRatio || 1;
+      console.log('DPR changed:', devicePixelRatio, '->', newDPR);
+      setDevicePixelRatio(newDPR);
+    };
+
+    // DPR 변화 감지를 위한 MediaQuery 사용
+    const mediaQuery = window.matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`);
+    mediaQuery.addEventListener('change', handleDPRChange);
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleDPRChange);
+    };
+  }, [devicePixelRatio]);
 
   const handleDeviceSelect = (deviceId) => {
     console.log('Device selected:', deviceId);
