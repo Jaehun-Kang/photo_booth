@@ -1,5 +1,6 @@
 .image-viewer {
   height: 100vh;
+  height: 100dvh;
   background-color: rgb(22.71, 69.44, 193.6);
   display: grid;
   grid-template-rows: min-content 1fr min-content;
@@ -7,10 +8,12 @@
   padding: 10px 0;
   font-family: "Arial", sans-serif;
   box-sizing: border-box;
+  overflow: hidden;
 }
 .image-viewer__header {
   text-align: center;
   margin-bottom: -20px;
+  flex-shrink: 0;
 }
 .image-viewer__header .result-logo {
   display: grid;
@@ -46,6 +49,8 @@
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
+  overflow: hidden;
+  min-height: 200px;
 }
 .image-viewer__image--img {
   max-width: 100%;
@@ -67,6 +72,8 @@
   width: 100%;
   justify-self: center;
   padding-block: 32px 10px;
+  flex-shrink: 0;
+  min-height: 80px;
 }
 .image-viewer__buttons--btn {
   padding: 8px 8px;

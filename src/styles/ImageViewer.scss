@@ -1,5 +1,6 @@
 .image-viewer {
   height: 100vh;
+  height: 100dvh; // 동적 뷰포트 높이 (모바일에서 더 정확)
   background-color: rgb(22.71, 69.44, 193.6);
   display: grid;
   grid-template-rows: min-content 1fr min-content; // 헤더, 이미지, 버튼 3영역
@@ -7,10 +8,12 @@
   padding: 10px 0;
   font-family: 'Arial', sans-serif;
   box-sizing: border-box;
+  overflow: hidden; // 스크롤 방지
 
   &__header {
     text-align: center;
     margin-bottom: -20px;
+    flex-shrink: 0; // 크기 고정
 
     .result-logo {
       display: grid;
@@ -48,6 +51,8 @@
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
+    overflow: hidden; // 이미지가 넘치는 것 방지
+    min-height: 200px; // 최소 높이 보장
     
     &--img {
       max-width: 100%;
@@ -70,6 +75,8 @@
     width: 100%;
     justify-self: center;
     padding-block: 32px 10px;
+    flex-shrink: 0; // 크기 고정
+    min-height: 80px; // 최소 높이 보장
     
     &--btn {
       padding: 8px 8px;

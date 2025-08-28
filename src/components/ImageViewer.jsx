@@ -15,27 +15,41 @@ const ImageViewer = () => {
   const calculateImageSize = () => {
     if (!headerRef.current || !buttonsRef.current) return;
 
-    const headerHeight = headerRef.current.offsetHeight;
-    const buttonsHeight = buttonsRef.current.offsetHeight;
-    const padding = 0; // 상하 패딩
+    // 더 정확한 요소 크기 계산
+    const headerRect = headerRef.current.getBoundingClientRect();
+    const buttonsRect = buttonsRef.current.getBoundingClientRect();
+    
+    const headerHeight = headerRect.height;
+    const buttonsHeight = buttonsRect.height;
+    const padding = 40; // 상하 패딩 (20px * 2)
     const gap = 32; // grid gap (1rem * 2)
     
-    const availableHeight = window.innerHeight - headerHeight - buttonsHeight - padding - gap;
+    // 모바일에서 더 안전한 여백 계산
+    const safeAreaTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0');
+    const safeAreaBottom = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab') || '0');
+    
+    const availableHeight = window.innerHeight - headerHeight - buttonsHeight - padding - gap - safeAreaTop - safeAreaBottom;
     const availableWidth = window.innerWidth - 40; // 좌우 패딩
     
-    console.log('이미지 크기 계산:', {
-      windowHeight: window.innerHeight,
+    // 최소 높이 보장 (모바일에서 너무 작아지는 것 방지)
+    const minHeight = Math.min(200, window.innerHeight * 0.3);
+    const finalHeight = Math.max(availableHeight, minHeight);
+    
+    console.log('🖼️ 이미지 크기 계산:', {
+      windowSize: `${window.innerWidth}x${window.innerHeight}`,
       headerHeight,
       buttonsHeight,
       availableHeight,
-      availableWidth
+      finalHeight,
+      availableWidth,
+      safeArea: `top:${safeAreaTop}, bottom:${safeAreaBottom}`
     });
     
     setImageStyle({
       width: 'auto',
-      height: `${availableHeight}px`, // 정확한 높이를 픽셀로 설정
+      height: `${finalHeight}px`,
       maxWidth: `${Math.min(availableWidth, 400)}px`,
-      maxHeight: `${availableHeight}px`,
+      maxHeight: `${finalHeight}px`,
       objectFit: 'contain'
     });
   };
@@ -168,21 +182,59 @@ const ImageViewer = () => {
 
   // 이미지 크기 계산을 위한 useEffect
   useEffect(() => {
+    let resizeTimer;
+    
     const handleResize = () => {
-      calculateImageSize();
+      // 모바일에서 키보드나 브라우저 UI 변화에 대응
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        calculateImageSize();
+      }, 150); // 디바운싱으로 성능 최적화
     };
 
-    // 초기 계산
-    const timer = setTimeout(() => {
+    // 화면 방향 변화 감지 (모바일)
+    const handleOrientationChange = () => {
+      setTimeout(() => {
+        calculateImageSize();
+      }, 300); // 방향 변화 후 약간의 지연
+    };
+
+    // 뷰포트 변화 감지 (모바일에서 브라우저 주소창 숨김/표시)
+    const handleVisualViewportChange = () => {
+      if (window.visualViewport) {
+        calculateImageSize();
+      }
+    };
+
+    // 초기 계산 (DOM 렌더링 완료 후)
+    const initialTimer = setTimeout(() => {
       calculateImageSize();
     }, 100);
 
-    // 윈도우 리사이즈 이벤트 리스너
+    // 추가 안전 장치 (이미지 로드 후)
+    const fallbackTimer = setTimeout(() => {
+      calculateImageSize();
+    }, 500);
+
+    // 이벤트 리스너 등록
     window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleOrientationChange);
+    
+    // 모바일 브라우저 뷰포트 변화 감지
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleVisualViewportChange);
+    }
 
     return () => {
-      clearTimeout(timer);
+      clearTimeout(initialTimer);
+      clearTimeout(fallbackTimer);
+      clearTimeout(resizeTimer);
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleOrientationChange);
+      
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleVisualViewportChange);
+      }
     };
   }, [imageData]); // imageData가 변경될 때마다 재계산
 
