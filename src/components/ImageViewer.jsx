@@ -10,6 +10,12 @@ const ImageViewer = () => {
   const handleImageError = (error) => {
     console.error('❌ 이미지 로딩 실패:', error);
     setImageError('이미지를 불러올 수 없습니다.');
+    
+    // Firebase URL을 직접 테스트해보기 위한 링크 제공
+    if (imageData && imageData.includes('firebasestorage.googleapis.com')) {
+      console.log('🔗 Firebase URL 직접 테스트:', imageData);
+      console.log('💡 위 URL을 새 탭에서 직접 열어서 이미지가 표시되는지 확인해보세요');
+    }
   };
 
   // 이미지 로딩 성공 핸들러
@@ -149,7 +155,32 @@ const ImageViewer = () => {
           {imageError && (
             <div className="image-error">
               <p style={{color: 'red', textAlign: 'center'}}>❌ {imageError}</p>
-              <p style={{fontSize: '0.9rem', color: '#666'}}>Firebase URL: {imageData?.substring(0, 100)}...</p>
+              <p style={{fontSize: '0.9rem', color: '#666', wordBreak: 'break-all'}}>
+                Firebase URL: {imageData}
+              </p>
+              {imageData && imageData.includes('firebasestorage.googleapis.com') && (
+                <div style={{marginTop: '1rem', textAlign: 'center'}}>
+                  <a 
+                    href={imageData} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-block',
+                      padding: '0.5rem 1rem',
+                      backgroundColor: '#4CAF50',
+                      color: 'white',
+                      textDecoration: 'none',
+                      borderRadius: '8px',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    🔗 Firebase URL 직접 테스트
+                  </a>
+                  <p style={{fontSize: '0.8rem', color: '#999', marginTop: '0.5rem'}}>
+                    위 버튼을 클릭해서 Firebase에서 이미지를 직접 불러올 수 있는지 확인해보세요
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
