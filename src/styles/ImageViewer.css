@@ -41,28 +41,15 @@
     gap: 11.2px;
   }
 }
-.image-viewer__header .result-logo-svg {
-  width: 100px;
-}
-@media (max-width: 768px) {
-  .image-viewer__header .result-logo-svg {
-    width: 140px;
-  }
-}
 .image-viewer__header .result-logo-text {
   position: relative;
   word-break: keep-all;
-  font-size: 34px;
   font-family: "PyeongChangPeace-Light", "Malgun Gothic", "Nanum Gothic", sans-serif;
   font-weight: 400;
   font-display: swap;
-  margin-bottom: 8px;
-}
-@media (max-width: 768px) {
-  .image-viewer__header .result-logo-text {
-    font-size: 46px;
-    margin-bottom: 11.2px;
-  }
+  margin: 0;
+  padding: 0;
+  line-height: 1;
 }
 .image-viewer__image {
   position: absolute;
@@ -117,9 +104,7 @@
   }
 }
 .image-viewer__buttons--btn {
-  padding: 8px 8px;
   border-radius: 12px;
-  font-size: 14.4px;
   font-weight: 600;
   line-height: 100%;
   cursor: pointer;
@@ -133,8 +118,6 @@
 }
 @media (max-width: 768px) {
   .image-viewer__buttons--btn {
-    padding: 18px 24px;
-    font-size: 20px;
     border-radius: 18px;
     min-height: 60px;
   }
@@ -164,15 +147,7 @@
 }
 .image-viewer__buttons--btn .icon {
   display: block;
-  width: 42px;
-  height: 42px;
   flex-shrink: 0;
-}
-@media (max-width: 768px) {
-  .image-viewer__buttons--btn .icon {
-    width: 60px;
-    height: 60px;
-  }
 }
 .image-viewer__buttons--btn.warning {
   background: #ff9800;

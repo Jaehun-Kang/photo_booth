@@ -41,7 +41,7 @@ const ImageViewer = () => {
         icon.style.height = `${iconSize}px`;
       }
       
-      console.log('🔧 버튼 크기 조정:', {
+      console.log('버튼 크기 조정:', {
         containerHeight: Math.round(containerHeight),
         buttonHeight: Math.round(buttonHeight),
         buttonWidth: Math.round(buttonWidth),
@@ -63,14 +63,16 @@ const ImageViewer = () => {
     const headerHeight = headerContainer.getBoundingClientRect().height;
     
     if (logoSvg && logoText) {
-      // 로고 크기는 헤더 높이의 70-80% (최소 80px, 최대 160px)
-      const logoSize = Math.min(Math.max(headerHeight * 0.75, 80), 160);
+      // 로고와 폰트 비율 130:48 기준으로 계산
+      // 헤더 높이의 70-80%를 기준으로 하되, 비율 유지
+      const baseSize = Math.min(Math.max(headerHeight * 0.75, 80), 160);
       
-      // 텍스트 크기는 헤더 높이의 40-50% (최소 24px, 최대 60px)  
-      const textSize = Math.min(Math.max(headerHeight * 0.45, 24), 60);
+      // 130:48 비율 유지 (130/48 = 2.708...)
+      const logoSize = baseSize;
+      const textSize = Math.round(logoSize * (48 / 130)); // 로고 크기의 48/130 비율
       
-      // 텍스트 margin-bottom은 로고 크기의 8%
-      const textMargin = logoSize * 0.08;
+      // 텍스트 margin-bottom은 현재 로고 높이의 8%
+      const textMargin = Math.round(logoSize * 0.08); // 현재 로고 크기의 8%
       
       // 스타일 적용
       logoSvg.style.width = `${logoSize}px`;
@@ -79,11 +81,12 @@ const ImageViewer = () => {
       logoText.style.fontSize = `${textSize}px`;
       logoText.style.marginBottom = `${textMargin}px`;
       
-      console.log('🏷️ 헤더 크기 조정:', {
+      console.log('헤더 크기 조정 (130:48 비율, margin 로고높이의 8%):', {
         headerHeight: Math.round(headerHeight),
         logoSize: Math.round(logoSize),
         textSize: Math.round(textSize),
-        textMargin: Math.round(textMargin)
+        ratio: `${logoSize}:${textSize} (목표: 130:48)`,
+        textMargin: `${textMargin}px (로고 ${logoSize}px의 8%)`
       });
     }
   }, []);
@@ -116,7 +119,7 @@ const ImageViewer = () => {
     const minHeight = Math.min(200, window.innerHeight * 0.3);
     const finalHeight = Math.max(availableHeight, minHeight);
     
-    console.log('🖼️ 이미지 크기 계산 (모바일 대응):', {
+    console.log('이미지 크기 계산 (모바일 대응):', {
       windowSize: `${window.innerWidth}x${window.innerHeight}`,
       isMobile,
       headerHeight,

@@ -42,27 +42,25 @@
       }
 
       &-svg {
-        width: 100px;
         
         // 모바일에서 더 크게
         @media (max-width: 768px) {
-          width: 140px; // 기존 120px에서 140px로 증가
         }
       }
 
       &-text {
         position: relative;
         word-break: keep-all;
-        font-size: 34px;
+        // font-size: 34px; // JSX에서 동적으로 설정
         font-family: 'PyeongChangPeace-Light', 'Malgun Gothic', 'Nanum Gothic', sans-serif;
         font-weight: 400;
         font-display: swap;
-        margin-bottom: calc(100px * 0.08); // 로고 높이의 8%를 margin-bottom으로
+        margin: 0; // 모든 margin 제거
+        padding: 0; // 모든 padding 제거
+        line-height: 1; // 줄간격 조정
         
         // 모바일에서 더 크게
         @media (max-width: 768px) {
-          font-size: 46px; // 기존 40px에서 46px로 증가
-          margin-bottom: calc(140px * 0.08); // 모바일 로고 높이의 8%
         }
       }
     }
@@ -123,9 +121,7 @@
     }
     
     &--btn {
-      padding: 8px 8px;
       border-radius: 12px;
-      font-size: 14.4px;
       font-weight: 600;
       line-height: 100%;
       cursor: pointer;
@@ -139,8 +135,6 @@
       
       // 모바일에서 더 큰 크기
       @media (max-width: 768px) {
-        padding: 18px 24px; // 기존 14px 16px에서 18px 24px로 증가
-        font-size: 20px; // 기존 18px에서 20px로 증가
         border-radius: 18px; // 기존 16px에서 18px로 증가
         min-height: 60px; // 최소 높이 추가
       }
@@ -174,15 +168,7 @@
 
       .icon {
         display: block;
-        width: 42px;
-        height: 42px;
         flex-shrink: 0;
-        
-        // 모바일에서 아이콘도 더 크게
-        @media (max-width: 768px) {
-          width: 60px; // 기존 52px에서 60px로 증가
-          height: 60px;
-        }
       }
 
       &.warning {
