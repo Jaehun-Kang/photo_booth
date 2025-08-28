@@ -29,7 +29,8 @@ const ImageViewer = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const imageId = urlParams.get('id');
     const dataParam = urlParams.get('data');
-    const urlParam = urlParams.get('url'); // Firebase Storage URL
+    const urlParam = urlParams.get('url'); // 기존 방식 (하위 호환)
+    const firebaseUrlParam = urlParams.get('firebaseUrl'); // 새로운 Base64 방식
     
     console.log('🔍 ImageViewer URL 파라미터 분석:');
     console.log('- 전체 URL:', window.location.href);
@@ -37,8 +38,22 @@ const ImageViewer = () => {
     console.log('- imageId:', imageId);
     console.log('- dataParam:', dataParam ? 'present' : 'none');
     console.log('- urlParam:', urlParam ? urlParam : 'none');
+    console.log('- firebaseUrlParam:', firebaseUrlParam ? firebaseUrlParam : 'none');
     
-    if (urlParam) {
+    if (firebaseUrlParam) {
+      // 새로운 Base64 방식 (Firebase URL 안전하게 전달)
+      try {
+        const decodedFirebaseUrl = atob(firebaseUrlParam);
+        console.log('🔗 Base64 디코딩된 Firebase URL:', decodedFirebaseUrl);
+        console.log('🧪 Firebase URL 유효성 체크:', decodedFirebaseUrl.startsWith('https://firebasestorage.googleapis.com'));
+        
+        setImageData(decodedFirebaseUrl);
+        console.log('📱 Base64 방식으로 Firebase Storage URL 로드 완료');
+      } catch (error) {
+        console.error('❌ Base64 디코딩 실패:', error);
+        console.log('🔧 원본 firebaseUrlParam:', firebaseUrlParam);
+      }
+    } else if (urlParam) {
       // Firebase Storage URL 디코딩 (쿼리 파라미터 충돌 방지용)
       try {
         const decodedUrl = decodeURIComponent(urlParam);

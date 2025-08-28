@@ -341,13 +341,17 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         const downloadURL = await uploadImageToFirebase(singleImageDataUrl, fileName);
         console.log('✅ Firebase 업로드 완료:', downloadURL);
         
-        // 이미지 뷰어 페이지 URL 생성 (Firebase URL의 쿼리 파라미터 때문에 인코딩 필요)
+        // 이미지 뷰어 페이지 URL 생성 (Base64로 안전하게 인코딩)
         const currentOrigin = window.location.origin;
         const currentPath = window.location.pathname;
-        const imageViewerUrl = `${currentOrigin}${currentPath}?view=image&url=${encodeURIComponent(downloadURL)}`;
+        
+        // Firebase URL을 Base64로 인코딩해서 안전하게 전달
+        const encodedFirebaseUrl = btoa(downloadURL);
+        const imageViewerUrl = `${currentOrigin}${currentPath}?view=image&firebaseUrl=${encodedFirebaseUrl}`;
         
         console.log('🌐 생성된 이미지 뷰어 URL:', imageViewerUrl);
         console.log('🔗 Firebase 다운로드 URL:', downloadURL);
+        console.log('📊 Base64 인코딩된 Firebase URL:', encodedFirebaseUrl);
         
         // QR 코드 생성
         const qrCodeDataUrl = await QRCode.toDataURL(imageViewerUrl, {
