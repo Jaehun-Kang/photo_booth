@@ -332,9 +332,48 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
       
       console.log(`📱 이미지 생성 완료: ${Math.round(singleImageDataUrl.length / 1024)}KB`);
       
-      // Data URL 크기 체크 (QR코드 한계: 약 3KB 이하)
-      if (singleImageDataUrl.length > 3000) {
-        console.log('📊 Data URL이 QR코드에 너무 큼, 더 작은 이미지로 재시도...');
+      // 웹 페이지 URL 생성 (Data URL 대신 URL 파라미터 사용)
+      const currentUrl = window.location.origin + window.location.pathname;
+      const imageViewerUrl = `${currentUrl}?view=image&data=${encodeURIComponent(singleImageDataUrl)}`;
+      
+      console.log('🌐 이미지 뷰어 URL 생성:', imageViewerUrl.substring(0, 100) + '...');
+      
+      // URL이 너무 길면 다른 방식 시도
+      if (imageViewerUrl.length > 2000) {
+        console.log('📊 URL이 너무 김, localStorage 방식으로 변경...');
+        
+        try {
+          // localStorage에 이미지 저장
+          const imageId = Date.now().toString();
+          localStorage.setItem(`photo_${imageId}`, singleImageDataUrl);
+          
+          // localStorage 방식 URL 생성
+          const shortUrl = `${currentUrl}?view=image&id=${imageId}`;
+          
+          // QR코드 생성
+          const qrCodeDataUrl = await QRCode.toDataURL(shortUrl, {
+            width: 150,
+            margin: 2,
+            color: {
+              dark: '#1647C1',
+              light: '#FFFFFF'
+            }
+          });
+          
+          setQrCodeUrl(qrCodeDataUrl);
+          setQrTargetUrl(shortUrl);
+          console.log('📱 localStorage 기반 QR코드 생성 완료');
+          return;
+          
+        } catch (storageError) {
+          console.error('❌ localStorage 저장 실패:', storageError);
+          // fallback으로 더 작은 이미지 시도
+        }
+      }
+      
+      // Data URL 크기 체크 (QR코드 한계: 약 2KB 이하로 더 엄격하게)
+      if (imageViewerUrl.length > 2000) {
+        console.log('📊 URL이 QR코드에 너무 큼, 더 작은 이미지로 재시도...');
         
         // 더 작은 크기로 재생성 (비율 유지하며 200px 너비로)
         const miniCanvas = document.createElement('canvas');
@@ -343,7 +382,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         // 원본 단일 이미지의 비율을 그대로 유지
         const originalWidth = singleImageCanvas.width;
         const originalHeight = singleImageCanvas.height;
-        const miniWidth = 200;
+        const miniWidth = 150; // 더 작게
         const miniHeight = Math.round(miniWidth * (originalHeight / originalWidth));
         
         miniCanvas.width = miniWidth;
@@ -355,41 +394,44 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         // 단일 이미지 캔버스에서 직접 복사 (이미 정확한 영역 추출됨)
         miniCtx.drawImage(singleImageCanvas, 0, 0, originalWidth, originalHeight, 0, 0, miniWidth, miniHeight);
         
-        const miniImageDataUrl = miniCanvas.toDataURL('image/jpeg', 0.2);
-        console.log(`📱 미니 이미지 생성: ${miniWidth}x${miniHeight}px, ${Math.round(miniImageDataUrl.length / 1024)}KB`);
+        const miniImageDataUrl = miniCanvas.toDataURL('image/jpeg', 0.1); // 더 강한 압축
+        const miniImageViewerUrl = `${currentUrl}?view=image&data=${encodeURIComponent(miniImageDataUrl)}`;
         
-        // 미니 이미지도 너무 크면 텍스트 QR코드로 fallback
-        if (miniImageDataUrl.length > 3000) {
-          console.log('🔄 이미지가 너무 큼, 다운로드 링크 방식으로 변경...');
+        console.log(`📱 미니 이미지 생성: ${miniWidth}x${miniHeight}px, URL 길이: ${miniImageViewerUrl.length}`);
+        
+        // 미니 이미지 URL도 너무 크면 에러
+        if (miniImageViewerUrl.length > 2000) {
+          console.log('🔄 이미지가 너무 큼, localStorage 강제 사용...');
           
-          // 이미지를 Blob으로 변환하여 다운로드 링크 생성
-          singleImageCanvas.toBlob((blob) => {
-            const url = URL.createObjectURL(blob);
+          try {
+            const imageId = Date.now().toString();
+            localStorage.setItem(`photo_${imageId}`, singleImageDataUrl);
+            const shortUrl = `${currentUrl}?view=image&id=${imageId}`;
             
-            // 다운로드 링크를 QR코드로 생성
-            QRCode.toDataURL(url, {
+            const qrCodeDataUrl = await QRCode.toDataURL(shortUrl, {
               width: 150,
               margin: 2,
               color: {
                 dark: '#1647C1',
                 light: '#FFFFFF'
               }
-            }).then(qrCodeDataUrl => {
-              setQrCodeUrl(qrCodeDataUrl);
-              setQrTargetUrl(url); // Blob URL을 타겟으로 설정
-              console.log('📱 다운로드 링크 QR코드 생성 완료');
-            }).catch(error => {
-              console.error('❌ 다운로드 링크 QR코드 생성 실패:', error);
-              alert('QR코드 생성에 실패했습니다.');
             });
-          }, 'image/jpeg', 0.8);
-          
-          return;
+            
+            setQrCodeUrl(qrCodeDataUrl);
+            setQrTargetUrl(shortUrl);
+            console.log('📱 localStorage 강제 QR코드 생성 완료');
+            return;
+            
+          } catch (error) {
+            console.error('❌ localStorage 저장 실패:', error);
+            alert('이미지가 너무 커서 QR코드로 변환할 수 없습니다.');
+            return;
+          }
         }
         
         // 미니 이미지로 QR코드 생성 시도
         try {
-          const qrCodeDataUrl = await QRCode.toDataURL(miniImageDataUrl, {
+          const qrCodeDataUrl = await QRCode.toDataURL(miniImageViewerUrl, {
             width: 150,
             margin: 2,
             color: {
@@ -400,7 +442,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
           });
           
           setQrCodeUrl(qrCodeDataUrl);
-          setQrTargetUrl(miniImageDataUrl);
+          setQrTargetUrl(miniImageViewerUrl);
           console.log('📱 미니 이미지 QR코드 생성 완료');
           return;
           
@@ -411,7 +453,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
       
       // 일반 크기 이미지로 QR코드 생성 시도
       try {
-        const qrCodeDataUrl = await QRCode.toDataURL(singleImageDataUrl, {
+        const qrCodeDataUrl = await QRCode.toDataURL(imageViewerUrl, {
           width: 150,
           margin: 2,
           color: {
@@ -422,8 +464,8 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         });
         
         setQrCodeUrl(qrCodeDataUrl);
-        setQrTargetUrl(singleImageDataUrl);
-        console.log('📱 QR코드 생성 완료 (Data URL 방식)');
+        setQrTargetUrl(imageViewerUrl);
+        console.log('📱 QR코드 생성 완료 (웹 URL 방식)');
         
       } catch (qrError) {
         console.error('❌ 모든 방식 실패:', qrError);

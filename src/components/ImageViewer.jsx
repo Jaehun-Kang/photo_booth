@@ -6,21 +6,32 @@ const ImageViewer = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // URL에서 이미지 ID 가져오기
+    // URL에서 이미지 데이터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
     const imageId = urlParams.get('id');
+    const dataParam = urlParams.get('data');
     
-    if (imageId) {
-      // localStorage에서 단일 이미지 데이터 가져오기 (우선순위)
+    if (dataParam) {
+      // URL 파라미터에서 직접 이미지 데이터 가져오기
+      try {
+        const decodedData = decodeURIComponent(dataParam);
+        setImageData(decodedData);
+        console.log('📱 URL 파라미터에서 이미지 로드 완료');
+      } catch (error) {
+        console.error('❌ URL 파라미터 디코딩 실패:', error);
+      }
+    } else if (imageId) {
+      // localStorage에서 이미지 ID로 데이터 가져오기
       let savedImage = localStorage.getItem(`photo_single_${imageId}`);
       
-      // 단일 이미지가 없으면 2개 이미지 버전 사용
+      // 단일 이미지가 없으면 일반 이미지 버전 사용
       if (!savedImage) {
         savedImage = localStorage.getItem(`photo_${imageId}`);
       }
       
       if (savedImage) {
         setImageData(savedImage);
+        console.log('📱 localStorage에서 이미지 로드 완료');
       }
     }
     setLoading(false);
@@ -61,7 +72,7 @@ const ImageViewer = () => {
       try {
         await navigator.clipboard.writeText(window.location.href);
         alert('링크가 클립보드에 복사되었습니다!');
-      } catch (error) {
+      } catch {
         downloadImage(); // 클립보드 복사도 실패 시 다운로드
       }
     }
