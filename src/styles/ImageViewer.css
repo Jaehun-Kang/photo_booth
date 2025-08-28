@@ -5,7 +5,6 @@
   position: relative;
   font-family: "Arial", sans-serif;
   box-sizing: border-box;
-  overflow: hidden;
 }
 @media (max-width: 768px) {
   .image-viewer {
@@ -22,7 +21,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgb(22.71, 69.44, 193.6);
   z-index: 10;
   box-sizing: border-box;
   padding: 0 20px;
@@ -61,8 +59,6 @@
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  overflow: visible;
-  padding: 12px;
 }
 .image-viewer__image--img {
   max-width: 100%;
@@ -90,7 +86,6 @@
   align-items: center;
   justify-content: center;
   gap: 16px;
-  background-color: rgb(22.71, 69.44, 193.6);
   z-index: 10;
   box-sizing: border-box;
   padding-inline: 20px;

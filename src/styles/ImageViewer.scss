@@ -5,7 +5,6 @@
   position: relative; // 그리드 대신 relative 포지셔닝
   font-family: 'Arial', sans-serif;
   box-sizing: border-box;
-  overflow: hidden;
   
   // 모바일에서 전체 너비 사용
   @media (max-width: 768px) {
@@ -22,7 +21,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgb(22.71, 69.44, 193.6);
     z-index: 10;
     box-sizing: border-box;
     padding: 0 20px;
@@ -76,8 +74,6 @@
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    overflow: visible; // 그림자가 잘리지 않도록 변경
-    padding: 12px; // 그림자를 위한 여백
     
     &--img {
       max-width: 100%;
@@ -107,7 +103,6 @@
     align-items: center;
     justify-content: center;
     gap: 16px;
-    background-color: rgb(22.71, 69.44, 193.6);
     z-index: 10;
     box-sizing: border-box;
     padding-inline: 20px;
