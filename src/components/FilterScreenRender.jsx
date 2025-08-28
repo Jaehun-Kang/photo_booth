@@ -448,10 +448,17 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
                 body {
                   margin: 0;
                   padding: 0;
+                }
+                .print-page {
+                  width: 4in;
+                  height: 6in;
                   display: flex;
                   justify-content: center;
                   align-items: center;
-                  min-height: 100vh;
+                  page-break-after: always; /* 각 이미지를 별도 페이지로 프린트 */
+                }
+                .print-page:last-child {
+                  page-break-after: auto; /* 마지막 페이지는 페이지 나누기 안함 */
                 }
                 img {
                   width: 4in;
@@ -461,8 +468,10 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
               </style>
             </head>
             <body>
-              ${Array(printCopies).fill().map(() => 
-                `<img src="${canvas.toDataURL('image/png', 1.0)}" alt="Photo Print" />`
+              ${Array(printCopies).fill().map((_, index) => 
+                `<div class="print-page">
+                  <img src="${canvas.toDataURL('image/png', 1.0)}" alt="Photo Print ${index + 1}" />
+                </div>`
               ).join('')}
             </body>
           </html>
