@@ -10,8 +10,24 @@ const ImageViewer = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const imageId = urlParams.get('id');
     const dataParam = urlParams.get('data');
+    const urlParam = urlParams.get('url'); // Firebase Storage URL
     
-    if (dataParam) {
+    console.log('🔍 ImageViewer URL 파라미터 분석:');
+    console.log('- imageId:', imageId);
+    console.log('- dataParam:', dataParam ? 'present' : 'none');
+    console.log('- urlParam:', urlParam ? urlParam : 'none');
+    
+    if (urlParam) {
+      // Firebase Storage URL 디코딩 (쿼리 파라미터 충돌 방지용)
+      try {
+        const decodedUrl = decodeURIComponent(urlParam);
+        console.log('🔗 디코딩된 Firebase URL:', decodedUrl);
+        setImageData(decodedUrl);
+        console.log('📱 Firebase Storage URL에서 이미지 로드 완료');
+      } catch (error) {
+        console.error('❌ Firebase URL 디코딩 실패:', error);
+      }
+    } else if (dataParam) {
       // URL 파라미터에서 직접 이미지 데이터 가져오기
       try {
         const decodedData = decodeURIComponent(dataParam);

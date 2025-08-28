@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcode';
+import { uploadImageToFirebase, generateUniqueFileName } from '../firebase/storage.js';
 import FilterScreen from './FilterScreen.jsx';
 import Overlay from './Overlay.jsx';
 import { createScreenSketch } from '../filters/createScreenSketch.js';
@@ -270,7 +271,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
       // 저장용 요소를 다시 비활성화
       resultRef.current.classList.remove('saving');
 
-      console.log(`� 저장 완료: ${canvas.width}x${canvas.height}px`);
+      console.log(`저장 완료: ${canvas.width}x${canvas.height}px`);
 
       // 고품질 PNG로 저장 (기존 방식)
       const dataUrl = canvas.toDataURL('image/png', 1.0);
@@ -327,132 +328,28 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         console.log('⚠️ 컨테이너를 찾지 못해 기존 방식 사용');
       }
       
-      // 이미지를 Data URL로 변환 (JPEG 압축을 더 강하게)
-      const singleImageDataUrl = singleImageCanvas.toDataURL('image/jpeg', 0.3);
+      // 이미지를 고품질 JPEG로 변환 (Firebase 업로드용)
+      const singleImageDataUrl = singleImageCanvas.toDataURL('image/jpeg', 0.9);
       
-      console.log(`📱 이미지 생성 완료: ${Math.round(singleImageDataUrl.length / 1024)}KB`);
+      console.log(`📱 Firebase 업로드용 이미지 생성: ${Math.round(singleImageDataUrl.length / 1024)}KB`);
       
-      // 웹 페이지 URL 생성 (Data URL 대신 URL 파라미터 사용)
-      const currentUrl = window.location.origin + window.location.pathname;
-      const imageViewerUrl = `${currentUrl}?view=image&data=${encodeURIComponent(singleImageDataUrl)}`;
-      
-      console.log('🌐 이미지 뷰어 URL 생성:', imageViewerUrl.substring(0, 100) + '...');
-      
-      // URL이 너무 길면 다른 방식 시도
-      if (imageViewerUrl.length > 2000) {
-        console.log('📊 URL이 너무 김, localStorage 방식으로 변경...');
-        
-        try {
-          // localStorage에 이미지 저장
-          const imageId = Date.now().toString();
-          localStorage.setItem(`photo_${imageId}`, singleImageDataUrl);
-          
-          // localStorage 방식 URL 생성
-          const shortUrl = `${currentUrl}?view=image&id=${imageId}`;
-          
-          // QR코드 생성
-          const qrCodeDataUrl = await QRCode.toDataURL(shortUrl, {
-            width: 150,
-            margin: 2,
-            color: {
-              dark: '#1647C1',
-              light: '#FFFFFF'
-            }
-          });
-          
-          setQrCodeUrl(qrCodeDataUrl);
-          setQrTargetUrl(shortUrl);
-          console.log('📱 localStorage 기반 QR코드 생성 완료');
-          return;
-          
-        } catch (storageError) {
-          console.error('❌ localStorage 저장 실패:', storageError);
-          // fallback으로 더 작은 이미지 시도
-        }
-      }
-      
-      // Data URL 크기 체크 (QR코드 한계: 약 2KB 이하로 더 엄격하게)
-      if (imageViewerUrl.length > 2000) {
-        console.log('📊 URL이 QR코드에 너무 큼, 더 작은 이미지로 재시도...');
-        
-        // 더 작은 크기로 재생성 (비율 유지하며 200px 너비로)
-        const miniCanvas = document.createElement('canvas');
-        const miniCtx = miniCanvas.getContext('2d');
-        
-        // 원본 단일 이미지의 비율을 그대로 유지
-        const originalWidth = singleImageCanvas.width;
-        const originalHeight = singleImageCanvas.height;
-        const miniWidth = 150; // 더 작게
-        const miniHeight = Math.round(miniWidth * (originalHeight / originalWidth));
-        
-        miniCanvas.width = miniWidth;
-        miniCanvas.height = miniHeight;
-        
-        miniCtx.fillStyle = '#ffffff';
-        miniCtx.fillRect(0, 0, miniWidth, miniHeight);
-        
-        // 단일 이미지 캔버스에서 직접 복사 (이미 정확한 영역 추출됨)
-        miniCtx.drawImage(singleImageCanvas, 0, 0, originalWidth, originalHeight, 0, 0, miniWidth, miniHeight);
-        
-        const miniImageDataUrl = miniCanvas.toDataURL('image/jpeg', 0.1); // 더 강한 압축
-        const miniImageViewerUrl = `${currentUrl}?view=image&data=${encodeURIComponent(miniImageDataUrl)}`;
-        
-        console.log(`📱 미니 이미지 생성: ${miniWidth}x${miniHeight}px, URL 길이: ${miniImageViewerUrl.length}`);
-        
-        // 미니 이미지 URL도 너무 크면 에러
-        if (miniImageViewerUrl.length > 2000) {
-          console.log('🔄 이미지가 너무 큼, localStorage 강제 사용...');
-          
-          try {
-            const imageId = Date.now().toString();
-            localStorage.setItem(`photo_${imageId}`, singleImageDataUrl);
-            const shortUrl = `${currentUrl}?view=image&id=${imageId}`;
-            
-            const qrCodeDataUrl = await QRCode.toDataURL(shortUrl, {
-              width: 150,
-              margin: 2,
-              color: {
-                dark: '#1647C1',
-                light: '#FFFFFF'
-              }
-            });
-            
-            setQrCodeUrl(qrCodeDataUrl);
-            setQrTargetUrl(shortUrl);
-            console.log('📱 localStorage 강제 QR코드 생성 완료');
-            return;
-            
-          } catch (error) {
-            console.error('❌ localStorage 저장 실패:', error);
-            alert('이미지가 너무 커서 QR코드로 변환할 수 없습니다.');
-            return;
-          }
-        }
-        
-        // 미니 이미지로 QR코드 생성 시도
-        try {
-          const qrCodeDataUrl = await QRCode.toDataURL(miniImageViewerUrl, {
-            width: 150,
-            margin: 2,
-            color: {
-              dark: '#1647C1',
-              light: '#FFFFFF'
-            },
-            errorCorrectionLevel: 'L'
-          });
-          
-          setQrCodeUrl(qrCodeDataUrl);
-          setQrTargetUrl(miniImageViewerUrl);
-          console.log('📱 미니 이미지 QR코드 생성 완료');
-          return;
-          
-        } catch (qrError) {
-          console.error('❌ 미니 이미지 QR코드도 실패:', qrError);
-        }
-      }
-      
-      // 일반 크기 이미지로 QR코드 생성 시도
       try {
+        // Firebase Storage에 업로드
+        const fileName = generateUniqueFileName('photobooth');
+        console.log('📤 Firebase Storage 업로드 시작...');
+        
+        const downloadURL = await uploadImageToFirebase(singleImageDataUrl, fileName);
+        console.log('✅ Firebase 업로드 완료:', downloadURL);
+        
+        // 이미지 뷰어 페이지 URL 생성 (Firebase URL의 쿼리 파라미터 때문에 인코딩 필요)
+        const currentOrigin = window.location.origin;
+        const currentPath = window.location.pathname;
+        const imageViewerUrl = `${currentOrigin}${currentPath}?view=image&url=${encodeURIComponent(downloadURL)}`;
+        
+        console.log('🌐 생성된 이미지 뷰어 URL:', imageViewerUrl);
+        console.log('🔗 Firebase 다운로드 URL:', downloadURL);
+        
+        // QR 코드 생성
         const qrCodeDataUrl = await QRCode.toDataURL(imageViewerUrl, {
           width: 150,
           margin: 2,
