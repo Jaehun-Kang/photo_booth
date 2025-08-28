@@ -20,6 +20,26 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
   const [capturedImages, setCapturedImages] = useState([]);
   const [showResult, setShowResult] = useState(false);
 
+  // 컴포넌트 언마운트 시 html2canvas-container 정리
+  useEffect(() => {
+    return () => {
+      // html2canvas가 생성한 컨테이너들 정리
+      const containers = document.querySelectorAll('[class*="html2canvas-container"]');
+      containers.forEach(container => {
+        console.log('🧹 FilterScreenRender 언마운트: html2canvas-container 정리:', container);
+        container.remove();
+      });
+      
+      // 추가로 html2canvas가 생성할 수 있는 다른 임시 요소들도 정리
+      const canvasElements = document.querySelectorAll('canvas[style*="position: absolute"]');
+      canvasElements.forEach(canvas => {
+        if (canvas.parentElement && canvas.parentElement !== document.body) {
+          console.log('🧹 FilterScreenRender 언마운트: 임시 canvas 요소 정리:', canvas);
+          canvas.remove();
+        }
+      });
+    };
+  }, []);
 
   useEffect(() => {
     const setupCamera = async () => {
@@ -606,10 +626,46 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         </div>
         
         <div className='btn_container'>
-          <button className='btn_container-home' onClick={onHome}>
+          <button className='btn_container-home' onClick={() => {
+            // html2canvas 컨테이너 정리
+            const containers = document.querySelectorAll('[class*="html2canvas-container"]');
+            containers.forEach(container => {
+              console.log('🧹 홈 버튼: html2canvas-container 정리:', container);
+              container.remove();
+            });
+            
+            // 추가로 html2canvas가 생성할 수 있는 다른 임시 요소들도 정리
+            const canvasElements = document.querySelectorAll('canvas[style*="position: absolute"]');
+            canvasElements.forEach(canvas => {
+              if (canvas.parentElement && canvas.parentElement !== document.body) {
+                console.log('🧹 홈 버튼: 임시 canvas 요소 정리:', canvas);
+                canvas.remove();
+              }
+            });
+            
+            onHome();
+          }}>
             <img className='btn_container-home--img' src={homeIcon} alt="Home" />
           </button>
-          <button className='btn_container-back' onClick={onBack}>
+          <button className='btn_container-back' onClick={() => {
+            // html2canvas 컨테이너 정리
+            const containers = document.querySelectorAll('[class*="html2canvas-container"]');
+            containers.forEach(container => {
+              console.log('🧹 뒤로가기 버튼: html2canvas-container 정리:', container);
+              container.remove();
+            });
+            
+            // 추가로 html2canvas가 생성할 수 있는 다른 임시 요소들도 정리
+            const canvasElements = document.querySelectorAll('canvas[style*="position: absolute"]');
+            canvasElements.forEach(canvas => {
+              if (canvas.parentElement && canvas.parentElement !== document.body) {
+                console.log('🧹 뒤로가기 버튼: 임시 canvas 요소 정리:', canvas);
+                canvas.remove();
+              }
+            });
+            
+            onBack();
+          }}>
             <img className='btn_container-back--img' src={backIcon} alt="Back" />
           </button>
         </div>
