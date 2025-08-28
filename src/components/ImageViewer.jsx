@@ -9,6 +9,15 @@ const ImageViewer = () => {
   // 이미지 로딩 에러 핸들러
   const handleImageError = (error) => {
     console.error('❌ 이미지 로딩 실패:', error);
+    
+    // CORS 프록시 백업 URL이 있고, 현재 직접 Firebase URL을 사용 중이라면
+    if (window.corsProxyBackup && imageData && imageData.includes('firebasestorage.googleapis.com')) {
+      console.log('🔄 CORS 프록시로 재시도:', window.corsProxyBackup);
+      setImageData(window.corsProxyBackup);
+      window.corsProxyBackup = null; // 무한 루프 방지
+      return;
+    }
+    
     setImageError('이미지를 불러올 수 없습니다.');
     
     // Firebase URL을 직접 테스트해보기 위한 링크 제공
@@ -47,12 +56,17 @@ const ImageViewer = () => {
         console.log('🔗 Base64 디코딩된 Firebase URL:', decodedFirebaseUrl);
         console.log('🧪 Firebase URL 유효성 체크:', decodedFirebaseUrl.startsWith('https://firebasestorage.googleapis.com'));
         
-        // CORS 프록시를 통한 이미지 로딩 시도
-        const corsProxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(decodedFirebaseUrl)}`;
-        console.log('🌐 CORS 프록시 URL 생성:', corsProxyUrl);
+        // 먼저 직접 Firebase URL로 시도
+        setImageData(decodedFirebaseUrl);
+        console.log('📱 Firebase Storage URL 직접 로드 시도');
         
-        setImageData(corsProxyUrl);
-        console.log('📱 CORS 프록시를 통한 Firebase Storage URL 로드 완료');
+        // 실패할 경우를 대비해 CORS 프록시 URL도 준비
+        const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(decodedFirebaseUrl)}`;
+        console.log('🌐 백업 CORS 프록시 URL 준비:', corsProxyUrl);
+        
+        // 이미지 로딩 실패 시 사용할 백업 URL을 window 객체에 저장
+        window.corsProxyBackup = corsProxyUrl;
+        
       } catch (error) {
         console.error('❌ Base64 디코딩 실패:', error);
         console.log('🔧 원본 firebaseUrlParam:', firebaseUrlParam);
@@ -118,11 +132,49 @@ const ImageViewer = () => {
     setLoading(false);
   }, []);
 
-  const downloadImage = () => {
-    if (imageData) {
+  const downloadImage = async () => {
+    if (!imageData) return;
+
+    try {
+      // Firebase Storage URL에서 직접 다운로드 시도
+      const urlParams = new URLSearchParams(window.location.search);
+      const firebaseUrlParam = urlParams.get('firebaseUrl');
+      
+      if (firebaseUrlParam) {
+        // Base64 디코딩하여 원본 Firebase URL 얻기
+        const originalFirebaseUrl = atob(firebaseUrlParam);
+        console.log('📥 Firebase URL로 직접 다운로드 시도:', originalFirebaseUrl);
+        
+        // Firebase URL에 다운로드 파라미터 추가
+        const downloadUrl = originalFirebaseUrl + '&response-content-disposition=attachment';
+        
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = `photobooth_${Date.now()}.png`;
+        link.target = '_blank'; // 새 탭에서 열기
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log('✅ Firebase 직접 다운로드 링크 생성 완료');
+        return;
+      }
+      
+      // 일반적인 방식으로 다운로드
       const link = document.createElement('a');
       link.href = imageData;
-      link.download = `photobooth_${Date.now()}.jpg`;
+      link.download = `photobooth_${Date.now()}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+    } catch (error) {
+      console.error('❌ 다운로드 실패:', error);
+      
+      // 실패 시 기본 방식으로 시도
+      const link = document.createElement('a');
+      link.href = imageData;
+      link.download = `photobooth_${Date.now()}.png`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -137,7 +189,7 @@ const ImageViewer = () => {
         // Data URL을 Blob으로 변환
         const response = await fetch(imageData);
         const blob = await response.blob();
-        const file = new File([blob], `photobooth_${Date.now()}.jpg`, { type: 'image/jpeg' });
+        const file = new File([blob], `photobooth_${Date.now()}.png`, { type: 'image/png' });
         
         await navigator.share({
           title: 'PhotoBooth 이미지',
@@ -155,6 +207,24 @@ const ImageViewer = () => {
         alert('링크가 클립보드에 복사되었습니다!');
       } catch {
         downloadImage(); // 클립보드 복사도 실패 시 다운로드
+      }
+    }
+  };
+
+  // CORS 프록시로 이미지 로드 테스트
+  const testCorsProxy = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const firebaseUrlParam = urlParams.get('firebaseUrl');
+    
+    if (firebaseUrlParam) {
+      try {
+        const decodedFirebaseUrl = atob(firebaseUrlParam);
+        const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(decodedFirebaseUrl)}`;
+        setImageData(corsProxyUrl);
+        setImageError(null);
+        console.log('🧪 CORS 프록시 테스트 URL 적용:', corsProxyUrl);
+      } catch (error) {
+        console.error('❌ 테스트 URL 생성 실패:', error);
       }
     }
   };
@@ -242,6 +312,16 @@ const ImageViewer = () => {
           >
             📤 공유하기
           </button>
+          
+          {imageError && (
+            <button 
+              onClick={testCorsProxy}
+              className="action-btn action-btn--warning"
+              style={{backgroundColor: '#ff9800', color: 'white'}}
+            >
+              🔄 프록시로 재시도
+            </button>
+          )}
         </div>
         
         <div className="image-info">

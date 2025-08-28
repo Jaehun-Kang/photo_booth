@@ -42,5 +42,5 @@ export const uploadImageToFirebase = async (dataUrl, fileName) => {
 export const generateUniqueFileName = (prefix = 'photobooth') => {
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).substring(2, 8);
-  return `${prefix}_${timestamp}_${randomId}.jpg`;
+  return `${prefix}_${timestamp}_${randomId}.png`;
 };

@@ -328,8 +328,8 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         console.log('⚠️ 컨테이너를 찾지 못해 기존 방식 사용');
       }
       
-      // 이미지를 고품질 JPEG로 변환 (Firebase 업로드용)
-      const singleImageDataUrl = singleImageCanvas.toDataURL('image/jpeg', 0.9);
+      // 이미지를 고품질 PNG로 변환 (Firebase 업로드용 - 무손실 압축)
+      const singleImageDataUrl = singleImageCanvas.toDataURL('image/png');
       
       console.log(`📱 Firebase 업로드용 이미지 생성: ${Math.round(singleImageDataUrl.length / 1024)}KB`);
       
