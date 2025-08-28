@@ -28,7 +28,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         const cameraInfo = await getCameraCapabilities(selectedDeviceId);
         const fullScreenResolution = getFullScreenResolution(cameraInfo);
         
-        console.log(`📹 [FullScreen] 최대 해상도 사용: ${fullScreenResolution.width}x${fullScreenResolution.height}`);
+        console.log(`[FullScreen] 최대 해상도 사용: ${fullScreenResolution.width}x${fullScreenResolution.height}`);
 
         const p5video = document.createElement('video');
         navigator.mediaDevices.getUserMedia({
@@ -182,13 +182,13 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         const scaleY = (vh - 40) / baseHeight;
         const scale = Math.min(scaleX, scaleY, 1); // 최대 1배까지만 허용
         
-        console.log(`📱 반응형 스케일: ${vw}x${vh} -> scale(${scale.toFixed(3)})`);
+        console.log(`반응형 스케일: ${vw}x${vh} -> scale(${scale.toFixed(3)})`);
         
         // translate(-50%, -50%)와 scale()을 함께 적용하여 중앙 정렬 유지
         displayContainerRef.current.style.transform = `translate(-50%, -50%) scale(${scale})`;
         
         if (scale < 1) {
-          console.log(`🎯 중앙 정렬 유지: translate(-50%, -50%) scale(${scale})`);
+          console.log(`중앙 정렬 유지: translate(-50%, -50%) scale(${scale})`);
         }
       };
 
@@ -204,7 +204,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
     const handleQRCodeGenerate = async () => {
       if (!resultRef.current) return;
 
-      console.log('💾 QR코드용 이미지 저장 시작...');
+      console.log('QR코드용 이미지 저장 시작...');
 
       // 폰트 로드 대기
       try {
@@ -212,7 +212,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         await document.fonts.load('400 16px sans-serif');
         console.log('🔤 폰트 로드 완료');
       } catch (error) {
-        console.warn('⚠️ 폰트 로드 실패:', error);
+        console.warn('폰트 로드 실패:', error);
       }
 
       await Promise.all(
@@ -225,7 +225,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
       // 저장용 요소를 활성화 (화면에는 보이지 않음)
       resultRef.current.classList.add('saving');
       
-      console.log('📸 저장용 요소 활성화 중...');
+      console.log('저장용 요소 활성화 중...');
 
       // 잠시 대기 (DOM 업데이트 완료 + 폰트 렌더링)
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -242,7 +242,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         foreignObjectRendering: false,
         imageTimeout: 15000,
         onclone: (clonedDoc) => {
-          console.log('📋 문서 클론 중...');
+          console.log('문서 클론 중...');
           
           // 폰트 스타일을 명시적으로 적용
           const style = clonedDoc.createElement('style');
@@ -298,7 +298,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         const containerWidth = containerRect.width * scale;
         const containerHeight = containerRect.height * scale;
         
-        console.log(`📐 첫 번째 컨테이너 위치: x=${containerX}, y=${containerY}, w=${containerWidth}, h=${containerHeight}`);
+        console.log(`첫 번째 컨테이너 위치: x=${containerX}, y=${containerY}, w=${containerWidth}, h=${containerHeight}`);
         
         // 단일 이미지 캔버스 크기 설정 (비율 유지)
         const targetWidth = 400;
@@ -317,7 +317,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
           0, 0, targetWidth, targetHeight                           // 대상 영역
         );
         
-        console.log(`📱 단일 이미지 생성: ${targetWidth}x${targetHeight}px`);
+        console.log(`단일 이미지 생성: ${targetWidth}x${targetHeight}px`);
       } else {
         // fallback: 기존 방식 사용
         singleImageCanvas.width = 400;
@@ -325,21 +325,21 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         singleCtx.fillStyle = '#ffffff';
         singleCtx.fillRect(0, 0, 400, 600);
         singleCtx.drawImage(canvas, 0, 0, 800, 1200, 0, 0, 400, 600);
-        console.log('⚠️ 컨테이너를 찾지 못해 기존 방식 사용');
+        console.log('컨테이너를 찾지 못해 기존 방식 사용');
       }
       
       // 이미지를 고품질 PNG로 변환 (Firebase 업로드용 - 무손실 압축)
       const singleImageDataUrl = singleImageCanvas.toDataURL('image/png');
       
-      console.log(`📱 Firebase 업로드용 이미지 생성: ${Math.round(singleImageDataUrl.length / 1024)}KB`);
+      console.log(`Firebase 업로드용 이미지 생성: ${Math.round(singleImageDataUrl.length / 1024)}KB`);
       
       try {
         // Firebase Storage에 업로드
         const fileName = generateUniqueFileName('photobooth');
-        console.log('📤 Firebase Storage 업로드 시작...');
+        console.log('Firebase Storage 업로드 시작...');
         
         const downloadURL = await uploadImageToFirebase(singleImageDataUrl, fileName);
-        console.log('✅ Firebase 업로드 완료:', downloadURL);
+        console.log('Firebase 업로드 완료:', downloadURL);
         
         // 이미지 뷰어 페이지 URL 생성 (Base64로 안전하게 인코딩)
         const currentOrigin = window.location.origin;
@@ -349,9 +349,9 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         const encodedFirebaseUrl = btoa(downloadURL);
         const imageViewerUrl = `${currentOrigin}${currentPath}?view=image&firebaseUrl=${encodedFirebaseUrl}`;
         
-        console.log('🌐 생성된 이미지 뷰어 URL:', imageViewerUrl);
-        console.log('🔗 Firebase 다운로드 URL:', downloadURL);
-        console.log('📊 Base64 인코딩된 Firebase URL:', encodedFirebaseUrl);
+        console.log('생성된 이미지 뷰어 URL:', imageViewerUrl);
+        console.log('Firebase 다운로드 URL:', downloadURL);
+        console.log('Base64 인코딩된 Firebase URL:', encodedFirebaseUrl);
         
         // QR 코드 생성
         const qrCodeDataUrl = await QRCode.toDataURL(imageViewerUrl, {
@@ -366,10 +366,10 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         
         setQrCodeUrl(qrCodeDataUrl);
         setQrTargetUrl(imageViewerUrl);
-        console.log('📱 QR코드 생성 완료 (웹 URL 방식)');
+        console.log('QR코드 생성 완료 (웹 URL 방식)');
         
       } catch (qrError) {
-        console.error('❌ 모든 방식 실패:', qrError);
+        console.error('모든 방식 실패:', qrError);
         alert('이미지가 너무 커서 QR코드로 변환할 수 없습니다. 이미지 크기를 줄여주세요.');
       }
     };
@@ -377,17 +377,17 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
     // QR코드 클릭 핸들러
     const handleQRCodeClick = () => {
       if (qrTargetUrl) {
-        console.log('🔗 QR코드 클릭, 이동할 URL:', qrTargetUrl);
+        console.log('QR코드 클릭, 이동할 URL:', qrTargetUrl);
         window.open(qrTargetUrl, '_blank');
       } else {
-        console.warn('⚠️ QR코드 클릭됐지만 타겟 URL이 없음');
+        console.warn('QR코드 클릭됐지만 타겟 URL이 없음');
       }
     };
 
     const handlePrint = async () => {
       if (!resultRef.current || isPrinting) return;
 
-      console.log(`🖨️ 프린트 시작: ${printCopies}매 출력`);
+      console.log(`프린트 시작: ${printCopies}매 출력`);
       setIsPrinting(true);
 
       try {
@@ -486,7 +486,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
           printWindow.close();
         }, 1000);
 
-        console.log(`🖨️ 프린트 완료: ${printCopies}매`);
+        console.log(`프린트 완료: ${printCopies}매`);
       } catch (error) {
         console.error('프린트 오류:', error);
         alert('프린트 중 오류가 발생했습니다.');

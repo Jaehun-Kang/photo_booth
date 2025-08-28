@@ -145,7 +145,7 @@ const ImageViewer = () => {
       try {
         const decodedData = decodeURIComponent(dataParam);
         setImageData(decodedData);
-        console.log('📱 URL 파라미터에서 이미지 로드 완료');
+        console.log('URL 파라미터에서 이미지 로드 완료');
       } catch (error) {
         console.error('URL 파라미터 디코딩 실패:', error);
       }
@@ -252,7 +252,7 @@ const ImageViewer = () => {
         
         await navigator.share({
           title: 'PhotoBooth 이미지',
-          text: '포토부스에서 찍은 사진입니다! 📸',
+          text: '포토부스에서 찍은 사진입니다!',
           files: [file]
         });
       } catch (error) {
@@ -281,9 +281,9 @@ const ImageViewer = () => {
         const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(decodedFirebaseUrl)}`;
         setImageData(corsProxyUrl);
         setImageError(null);
-        console.log('🧪 CORS 프록시 테스트 URL 적용:', corsProxyUrl);
+        console.log('CORS 프록시 테스트 URL 적용:', corsProxyUrl);
       } catch (error) {
-        console.error('❌ 테스트 URL 생성 실패:', error);
+        console.error('테스트 URL 생성 실패:', error);
       }
     }
   };

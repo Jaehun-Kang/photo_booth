@@ -32,7 +32,7 @@ function FilterPreviewRender({ onSelectFilter, selectedDeviceId, onDeviceSelect,
       const cameraInfo = await getCameraCapabilities(selectedDeviceId);
       const previewResolution = getPreviewResolution(cameraInfo);
       
-      console.log(`📹 프리뷰용 해상도 설정: ${previewResolution.width}x${previewResolution.height} (원본: ${cameraInfo.maxWidth}x${cameraInfo.maxHeight})`);
+      console.log(`프리뷰용 해상도 설정: ${previewResolution.width}x${previewResolution.height} (원본: ${cameraInfo.maxWidth}x${cameraInfo.maxHeight})`);
 
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {

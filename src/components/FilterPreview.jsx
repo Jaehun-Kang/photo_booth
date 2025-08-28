@@ -97,7 +97,7 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
       if (containerRef.current) {
         const canvases = containerRef.current.querySelectorAll('canvas');
         if (canvases.length > 0) {
-          console.log(`🔄 생성 전 잔여 캔버스 ${canvases.length}개 정리`);
+          console.log(`생성 전 잔여 캔버스 ${canvases.length}개 정리`);
           canvases.forEach((canvas, index) => {
             console.log(`  - 생성전 캔버스 ${index + 1} 제거:`, canvas.id || 'unnamed');
             canvas.remove();
@@ -147,7 +147,7 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
         // 2단계: 남은 캔버스 요소들 강제 제거
         if (containerRef.current) {
           const canvases = containerRef.current.querySelectorAll('canvas');
-          console.log(`🧹 유령 캔버스 정리: ${canvases.length}개 발견`);
+          console.log(`유령 캔버스 정리: ${canvases.length}개 발견`);
           canvases.forEach((canvas, index) => {
             console.log(`  - 캔버스 ${index + 1} 제거:`, canvas.id || 'unnamed');
             canvas.remove();
@@ -156,7 +156,7 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
           // 3단계: DOM 정리 확인
           const remainingCanvases = containerRef.current.querySelectorAll('canvas');
           if (remainingCanvases.length > 0) {
-            console.warn(`⚠️ 제거되지 않은 캔버스 ${remainingCanvases.length}개 발견`);
+            console.warn(`제거되지 않은 캔버스 ${remainingCanvases.length}개 발견`);
           }
         }
 

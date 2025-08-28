@@ -96,7 +96,7 @@ const FilterScreen = ({ sketchFactory, video }) => {
       // 2단계: 남은 캔버스 요소들 강제 제거
       if (!containerRef.current) return;
       const canvases = containerRef.current.querySelectorAll('canvas');
-      console.log(`🧹 [FullScreen] 유령 캔버스 정리: ${canvases.length}개 발견`);
+      console.log(`[FullScreen] 유령 캔버스 정리: ${canvases.length}개 발견`);
       canvases.forEach((canvas, index) => {
         console.log(`  - 캔버스 ${index + 1} 제거:`, canvas.id || 'unnamed');
         canvas.remove();
@@ -105,7 +105,7 @@ const FilterScreen = ({ sketchFactory, video }) => {
       // 3단계: DOM 정리 확인
       const remainingCanvases = containerRef.current.querySelectorAll('canvas');
       if (remainingCanvases.length > 0) {
-        console.warn(`⚠️ [FullScreen] 제거되지 않은 캔버스 ${remainingCanvases.length}개 발견`);
+        console.warn(`[FullScreen] 제거되지 않은 캔버스 ${remainingCanvases.length}개 발견`);
       }
     };
 
@@ -115,7 +115,7 @@ const FilterScreen = ({ sketchFactory, video }) => {
       // 생성 전 마지막 정리 확인
       const preExistingCanvases = containerRef.current.querySelectorAll('canvas');
       if (preExistingCanvases.length > 0) {
-        console.log(`🔄 [FullScreen] 생성 전 잔여 캔버스 ${preExistingCanvases.length}개 정리`);
+        console.log(`[FullScreen] 생성 전 잔여 캔버스 ${preExistingCanvases.length}개 정리`);
         preExistingCanvases.forEach(canvas => canvas.remove());
       }
 
