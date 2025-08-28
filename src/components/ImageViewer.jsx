@@ -44,7 +44,30 @@ const ImageViewer = () => {
         const decodedUrl = decodeURIComponent(urlParam);
         console.log('🔗 디코딩된 Firebase URL:', decodedUrl);
         console.log('🧪 Firebase URL 유효성 체크:', decodedUrl.startsWith('https://firebasestorage.googleapis.com'));
-        setImageData(decodedUrl);
+        
+        // CORS 문제 해결을 위한 fetch 시도
+        console.log('🌐 CORS 우회를 위한 fetch 시도...');
+        fetch(decodedUrl, {
+          method: 'GET',
+          mode: 'cors'
+        })
+        .then(response => {
+          if (response.ok) {
+            console.log('✅ Firebase 이미지 fetch 성공');
+            setImageData(decodedUrl);
+          } else {
+            console.error('❌ Firebase 이미지 fetch 실패:', response.status, response.statusText);
+            // 일반적인 img 태그 방식으로 시도
+            setImageData(decodedUrl);
+          }
+        })
+        .catch(fetchError => {
+          console.error('❌ Firebase fetch 오류:', fetchError);
+          console.log('🔄 일반 img 태그 방식으로 fallback...');
+          // fetch 실패 시에도 img 태그로 시도
+          setImageData(decodedUrl);
+        });
+        
         console.log('📱 Firebase Storage URL에서 이미지 로드 완료');
       } catch (error) {
         console.error('❌ Firebase URL 디코딩 실패:', error);
@@ -149,6 +172,7 @@ const ImageViewer = () => {
             src={imageData} 
             alt="PhotoBooth 촬영 사진" 
             className="shared-image"
+            crossOrigin="anonymous"
             onLoad={handleImageLoad}
             onError={handleImageError}
           />
