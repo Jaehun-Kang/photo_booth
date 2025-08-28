@@ -9,6 +9,12 @@
   font-family: 'Arial', sans-serif;
   box-sizing: border-box;
   overflow: hidden; // 스크롤 방지
+  
+  // 모바일에서 전체 너비 활용
+  @media (max-width: 768px) {
+    padding: 5px;
+    width: 100vw;
+  }
 
   &__header {
     text-align: center;
@@ -32,7 +38,7 @@
         
         // 모바일에서 더 크게
         @media (max-width: 768px) {
-          width: 120px;
+          width: 140px; // 기존 120px에서 140px로 증가
         }
       }
 
@@ -48,7 +54,7 @@
         
         // 모바일에서 더 크게
         @media (max-width: 768px) {
-          font-size: 40px;
+          font-size: 46px; // 기존 40px에서 46px로 증가
         }
       }
     }
@@ -91,11 +97,12 @@
     flex-shrink: 0; // 크기 고정
     min-height: 80px; // 최소 높이 보장
     
-    // 모바일에서 더 큰 간격
+    // 모바일에서 더 큰 간격과 전체 너비 활용
     @media (max-width: 768px) {
-      gap: 20px;
-      padding-block: 40px 15px;
-      min-height: 100px;
+      gap: 24px; // 기존 20px에서 24px로 증가
+      padding-block: 45px 20px; // 기존 40px 15px에서 45px 20px로 증가
+      min-height: 120px; // 기존 100px에서 120px로 증가
+      padding-inline: 15px; // 좌우 패딩 추가로 전체 너비 활용
     }
     
     &--btn {
@@ -114,9 +121,10 @@
       
       // 모바일에서 더 큰 크기
       @media (max-width: 768px) {
-        padding: 14px 16px;
-        font-size: 18px;
-        border-radius: 16px;
+        padding: 18px 24px; // 기존 14px 16px에서 18px 24px로 증가
+        font-size: 20px; // 기존 18px에서 20px로 증가
+        border-radius: 18px; // 기존 16px에서 18px로 증가
+        min-height: 60px; // 최소 높이 추가
       }
 
       &.primary {
@@ -134,6 +142,11 @@
         background: rgb(22.71, 69.44, 193.6);
         color: white;
         border: 2px solid #fff;
+        
+        // 모바일에서 정사각형 버튼 크기 조정
+        @media (max-width: 768px) {
+          min-width: 70px; // 정사각형 크기 보장
+        }
 
         &:hover {
           transform: translateY(-2px);
@@ -149,8 +162,8 @@
         
         // 모바일에서 아이콘도 더 크게
         @media (max-width: 768px) {
-          width: 52px;
-          height: 52px;
+          width: 60px; // 기존 52px에서 60px로 증가
+          height: 60px;
         }
       }
 

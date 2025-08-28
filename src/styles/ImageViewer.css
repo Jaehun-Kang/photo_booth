@@ -10,6 +10,12 @@
   box-sizing: border-box;
   overflow: hidden;
 }
+@media (max-width: 768px) {
+  .image-viewer {
+    padding: 5px;
+    width: 100vw;
+  }
+}
 .image-viewer__header {
   text-align: center;
   margin-bottom: -20px;
@@ -34,7 +40,7 @@
 }
 @media (max-width: 768px) {
   .image-viewer__header .result-logo-svg {
-    width: 120px;
+    width: 140px;
   }
 }
 .image-viewer__header .result-logo-text {
@@ -49,7 +55,7 @@
 }
 @media (max-width: 768px) {
   .image-viewer__header .result-logo-text {
-    font-size: 40px;
+    font-size: 46px;
   }
 }
 .image-viewer__image {
@@ -89,9 +95,10 @@
 }
 @media (max-width: 768px) {
   .image-viewer__buttons {
-    gap: 20px;
-    padding-block: 40px 15px;
-    min-height: 100px;
+    gap: 24px;
+    padding-block: 45px 20px;
+    min-height: 120px;
+    padding-inline: 15px;
   }
 }
 .image-viewer__buttons--btn {
@@ -110,9 +117,10 @@
 }
 @media (max-width: 768px) {
   .image-viewer__buttons--btn {
-    padding: 14px 16px;
-    font-size: 18px;
-    border-radius: 16px;
+    padding: 18px 24px;
+    font-size: 20px;
+    border-radius: 18px;
+    min-height: 60px;
   }
 }
 .image-viewer__buttons--btn.primary {
@@ -129,6 +137,11 @@
   color: white;
   border: 2px solid #fff;
 }
+@media (max-width: 768px) {
+  .image-viewer__buttons--btn.secondary {
+    min-width: 70px;
+  }
+}
 .image-viewer__buttons--btn.secondary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -141,8 +154,8 @@
 }
 @media (max-width: 768px) {
   .image-viewer__buttons--btn .icon {
-    width: 52px;
-    height: 52px;
+    width: 60px;
+    height: 60px;
   }
 }
 .image-viewer__buttons--btn.warning {
