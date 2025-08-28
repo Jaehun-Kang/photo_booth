@@ -14,7 +14,6 @@ export const fadeFilter = {
     const expectedLength = 4 * captureW * captureH;
     if (!pixels || pixels.length < expectedLength) return;
 
-    // 실제 p5 캔버스 크기로 스케일링
     const actualW = p5js.width;
     const actualH = p5js.height;
     const scaleX = actualW / captureW;

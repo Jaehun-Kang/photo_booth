@@ -7,7 +7,6 @@ export const circleFilter = {
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
     p5js.background(0);
 
-    // 정상적인 스케일링 계산 (캔버스 → 캡처)
     const actualW = p5js.width;
     const actualH = p5js.height;
     const scaleX = actualW / captureW;
