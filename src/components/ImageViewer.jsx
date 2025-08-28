@@ -273,6 +273,27 @@ const ImageViewer = () => {
     }, 100);
   };
 
+  // 컴포넌트 언마운트 시 html2canvas-container 정리
+  useEffect(() => {
+    return () => {
+      // html2canvas가 생성한 컨테이너들 정리
+      const containers = document.querySelectorAll('[class*="html2canvas-container"]');
+      containers.forEach(container => {
+        console.log('🧹 html2canvas-container 정리:', container);
+        container.remove();
+      });
+      
+      // 추가로 html2canvas가 생성할 수 있는 다른 임시 요소들도 정리
+      const canvasElements = document.querySelectorAll('canvas[style*="position: absolute"]');
+      canvasElements.forEach(canvas => {
+        if (canvas.parentElement && canvas.parentElement !== document.body) {
+          console.log('🧹 임시 canvas 요소 정리:', canvas);
+          canvas.remove();
+        }
+      });
+    };
+  }, []);
+
   useEffect(() => {
     // URL에서 이미지 데이터 가져오기
     const urlParams = new URLSearchParams(window.location.search);
