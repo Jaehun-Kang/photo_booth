@@ -93,15 +93,37 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
       creatingInstanceRef.current = true;
       setReady(false);
 
-      // 중복 캔버스 제거
+      // 생성 전 마지막 정리 확인
       if (containerRef.current) {
         const canvases = containerRef.current.querySelectorAll('canvas');
-        canvases.forEach(canvas => canvas.remove());
+        if (canvases.length > 0) {
+          console.log(`🔄 생성 전 잔여 캔버스 ${canvases.length}개 정리`);
+          canvases.forEach((canvas, index) => {
+            console.log(`  - 생성전 캔버스 ${index + 1} 제거:`, canvas.id || 'unnamed');
+            canvas.remove();
+          });
+        }
       }
 
       const canvasWidth = containerRef.current.clientWidth;
       const canvasHeight = containerRef.current.clientHeight;
-      const sketch = sketchFactory(canvasWidth, canvasHeight);
+      
+      // 3:2 비율에 맞춰 실제 캔버스 크기 계산
+      const targetAspect = 3 / 2;
+      const containerAspect = canvasWidth / canvasHeight;
+      
+      let actualWidth, actualHeight;
+      if (containerAspect > targetAspect) {
+        // 컨테이너가 더 넓은 경우: 높이 기준으로 너비 계산
+        actualHeight = canvasHeight;
+        actualWidth = actualHeight * targetAspect;
+      } else {
+        // 컨테이너가 더 좁은 경우: 너비 기준으로 높이 계산
+        actualWidth = canvasWidth;
+        actualHeight = actualWidth / targetAspect;
+      }
+      
+      const sketch = sketchFactory(actualWidth, actualHeight);
       p5InstanceRef.current = new p5(sketch, containerRef.current);
 
       setReady(true);
@@ -118,17 +140,31 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
         }
         removePendingRef.current = true;
 
+        // 1단계: p5 인스턴스 제거
         p5InstanceRef.current.remove();
         p5InstanceRef.current = null;
 
+        // 2단계: 남은 캔버스 요소들 강제 제거
         if (containerRef.current) {
           const canvases = containerRef.current.querySelectorAll('canvas');
-          canvases.forEach(canvas => canvas.remove());
+          console.log(`🧹 유령 캔버스 정리: ${canvases.length}개 발견`);
+          canvases.forEach((canvas, index) => {
+            console.log(`  - 캔버스 ${index + 1} 제거:`, canvas.id || 'unnamed');
+            canvas.remove();
+          });
+          
+          // 3단계: DOM 정리 확인
+          const remainingCanvases = containerRef.current.querySelectorAll('canvas');
+          if (remainingCanvases.length > 0) {
+            console.warn(`⚠️ 제거되지 않은 캔버스 ${remainingCanvases.length}개 발견`);
+          }
         }
 
         setTimeout(() => {
           removePendingRef.current = false;
-          createInstance();
+          if (!isCancelled) {
+            createInstance();
+          }
         }, 50);
       } else {
         createInstance();
@@ -158,6 +194,9 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
         aspectRatio: '3 / 2', // ← 비율 고정
         position: 'relative',
         backgroundColor: '#111',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
       {!ready && (

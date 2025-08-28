@@ -13,6 +13,7 @@ import { getCameraCapabilities, getFullScreenResolution } from '../utils/cameraU
 function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onError }) {
   const [video, setVideo] = useState(null);
   const [videoReady, setVideoReady] = useState(false);
+  const [webcamError, setWebcamError] = useState(null);
   const [countdown, setCountdown] = useState(null);
   const [showFlash, setShowFlash] = useState(false);
   const [captureProgress, setCaptureProgress] = useState(null);
@@ -54,7 +55,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
           }
         }).catch(err => {
           console.error('웹캠 접근 오류:', err);
-          onError && onError(err);
+          setWebcamError(err);
         });
 
         return () => {
@@ -196,14 +197,31 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
       return () => window.removeEventListener('resize', updateScale);
     }, []);
 
-    // QR코드는 사용자가 버튼을 클릭할 때 생성
-    // useEffect 제거 - 자동 생성하지 않음
+    // QR코드 초기 생성
+    useEffect(() => {
+      if (images.length > 0) {
+        console.log('🔄 이미지 준비됨, QR코드 생성 시작...');
+        generateQRCodeWithImage();
+      }
+    }, [images]);
 
-    // QR코드 생성 버튼 클릭 핸들러
-    const handleQRCodeGenerate = async () => {
+    const generateQRCodeWithImage = async () => {
+      try {
+        console.log('🔄 이미지와 함께 QR코드 생성 시작...');
+        
+        // 이미지 저장 로직을 여기서 바로 실행
+        await saveImageAndGenerateQR();
+        
+      } catch (error) {
+        console.error('❌ QR코드 생성 오류:', error);
+        console.error('오류 상세:', error.message, error.stack);
+      }
+    };
+
+    const saveImageAndGenerateQR = async () => {
       if (!resultRef.current) return;
 
-      console.log('💾 QR코드용 이미지 저장 시작...');
+      console.log('💾 이미지 저장 및 QR코드 생성 시작...');
 
       // 폰트 로드 대기
       try {
@@ -224,13 +242,13 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
       // 저장용 요소를 활성화 (화면에는 보이지 않음)
       resultRef.current.classList.add('saving');
       
-      console.log('📸 저장용 요소 활성화 중...');
+      console.log('📸 저장용 요소 활성화 중 (화면 뒤에서)...');
 
       // 잠시 대기 (DOM 업데이트 완료 + 폰트 렌더링)
       await new Promise(resolve => setTimeout(resolve, 300));
 
       const canvas = await html2canvas(resultRef.current, {
-        scale: 2, // 고해상도로 캡처 (기존 방식)
+        scale: 1, // 스케일을 1로 줄여서 용량 감소
         width: 800,
         height: 1200,
         useCORS: true,
@@ -272,164 +290,203 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
 
       console.log(`� 저장 완료: ${canvas.width}x${canvas.height}px`);
 
-      // 고품질 PNG로 저장 (기존 방식)
-      const dataUrl = canvas.toDataURL('image/png', 1.0);
+      // 압축된 이미지로 저장 (용량 절약)
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8); // JPEG로 80% 품질
       
       // 현재 시간을 기반으로 고유 ID 생성
       const imageId = Date.now().toString();
       
-      // 단일 이미지 생성 및 저장 (뷰어용)
+      // 단일 이미지만 저장 (용량 절약)
       const singleImageCanvas = document.createElement('canvas');
       const singleCtx = singleImageCanvas.getContext('2d');
       
-      // result-container들의 실제 레이아웃 찾기
-      const resultContainers = resultRef.current.querySelectorAll('.result-container');
-      const firstContainer = resultContainers[0];
+      // 단일 이미지는 400x600 크기로 (더 작게)
+      singleImageCanvas.width = 400;
+      singleImageCanvas.height = 600;
       
-      if (firstContainer) {
-        const containerRect = firstContainer.getBoundingClientRect();
-        const resultRect = resultRef.current.getBoundingClientRect();
-        
-        // 실제 컨테이너의 위치와 크기 계산 (스케일 고려)
-        const scale = 2; // html2canvas scale
-        const containerX = (containerRect.left - resultRect.left) * scale;
-        const containerY = (containerRect.top - resultRect.top) * scale;
-        const containerWidth = containerRect.width * scale;
-        const containerHeight = containerRect.height * scale;
-        
-        console.log(`📐 첫 번째 컨테이너 위치: x=${containerX}, y=${containerY}, w=${containerWidth}, h=${containerHeight}`);
-        
-        // 단일 이미지 캔버스 크기 설정 (비율 유지)
-        const targetWidth = 400;
-        const targetHeight = Math.round(targetWidth * (containerHeight / containerWidth));
-        singleImageCanvas.width = targetWidth;
-        singleImageCanvas.height = targetHeight;
-        
-        // 흰색 배경
-        singleCtx.fillStyle = '#ffffff';
-        singleCtx.fillRect(0, 0, targetWidth, targetHeight);
-        
-        // 정확한 위치에서 첫 번째 이미지 영역 추출
-        singleCtx.drawImage(
-          canvas, 
-          containerX, containerY, containerWidth, containerHeight,  // 소스 영역
-          0, 0, targetWidth, targetHeight                           // 대상 영역
-        );
-        
-        console.log(`📱 단일 이미지 생성: ${targetWidth}x${targetHeight}px`);
-      } else {
-        // fallback: 기존 방식 사용
-        singleImageCanvas.width = 400;
-        singleImageCanvas.height = 600;
-        singleCtx.fillStyle = '#ffffff';
-        singleCtx.fillRect(0, 0, 400, 600);
-        singleCtx.drawImage(canvas, 0, 0, 800, 1200, 0, 0, 400, 600);
-        console.log('⚠️ 컨테이너를 찾지 못해 기존 방식 사용');
-      }
+      // 흰색 배경
+      singleCtx.fillStyle = '#ffffff';
+      singleCtx.fillRect(0, 0, 400, 600);
       
-      // 이미지를 Data URL로 변환 (JPEG 압축을 더 강하게)
-      const singleImageDataUrl = singleImageCanvas.toDataURL('image/jpeg', 0.3);
+      // 원본 캔버스에서 첫 번째 이미지 영역 복사하여 축소
+      singleCtx.drawImage(canvas, 0, 0, 800, 1200, 0, 0, 400, 600);
       
-      console.log(`📱 이미지 생성 완료: ${Math.round(singleImageDataUrl.length / 1024)}KB`);
+      const singleImageDataUrl = singleImageCanvas.toDataURL('image/jpeg', 0.8);
       
-      // Data URL 크기 체크 (QR코드 한계: 약 3KB 이하)
-      if (singleImageDataUrl.length > 3000) {
-        console.log('📊 Data URL이 QR코드에 너무 큼, 더 작은 이미지로 재시도...');
-        
-        // 더 작은 크기로 재생성 (비율 유지하며 200px 너비로)
-        const miniCanvas = document.createElement('canvas');
-        const miniCtx = miniCanvas.getContext('2d');
-        
-        // 원본 단일 이미지의 비율을 그대로 유지
-        const originalWidth = singleImageCanvas.width;
-        const originalHeight = singleImageCanvas.height;
-        const miniWidth = 200;
-        const miniHeight = Math.round(miniWidth * (originalHeight / originalWidth));
-        
-        miniCanvas.width = miniWidth;
-        miniCanvas.height = miniHeight;
-        
-        miniCtx.fillStyle = '#ffffff';
-        miniCtx.fillRect(0, 0, miniWidth, miniHeight);
-        
-        // 단일 이미지 캔버스에서 직접 복사 (이미 정확한 영역 추출됨)
-        miniCtx.drawImage(singleImageCanvas, 0, 0, originalWidth, originalHeight, 0, 0, miniWidth, miniHeight);
-        
-        const miniImageDataUrl = miniCanvas.toDataURL('image/jpeg', 0.2);
-        console.log(`📱 미니 이미지 생성: ${miniWidth}x${miniHeight}px, ${Math.round(miniImageDataUrl.length / 1024)}KB`);
-        
-        // 미니 이미지도 너무 크면 텍스트 QR코드로 fallback
-        if (miniImageDataUrl.length > 3000) {
-          console.log('🔄 이미지가 너무 큼, 다운로드 링크 방식으로 변경...');
-          
-          // 이미지를 Blob으로 변환하여 다운로드 링크 생성
-          singleImageCanvas.toBlob((blob) => {
-            const url = URL.createObjectURL(blob);
-            
-            // 다운로드 링크를 QR코드로 생성
-            QRCode.toDataURL(url, {
-              width: 150,
-              margin: 2,
-              color: {
-                dark: '#1647C1',
-                light: '#FFFFFF'
-              }
-            }).then(qrCodeDataUrl => {
-              setQrCodeUrl(qrCodeDataUrl);
-              setQrTargetUrl(url); // Blob URL을 타겟으로 설정
-              console.log('📱 다운로드 링크 QR코드 생성 완료');
-            }).catch(error => {
-              console.error('❌ 다운로드 링크 QR코드 생성 실패:', error);
-              alert('QR코드 생성에 실패했습니다.');
-            });
-          }, 'image/jpeg', 0.8);
-          
-          return;
-        }
-        
-        // 미니 이미지로 QR코드 생성 시도
-        try {
-          const qrCodeDataUrl = await QRCode.toDataURL(miniImageDataUrl, {
-            width: 150,
-            margin: 2,
-            color: {
-              dark: '#1647C1',
-              light: '#FFFFFF'
-            },
-            errorCorrectionLevel: 'L'
-          });
-          
-          setQrCodeUrl(qrCodeDataUrl);
-          setQrTargetUrl(miniImageDataUrl);
-          console.log('📱 미니 이미지 QR코드 생성 완료');
-          return;
-          
-        } catch (qrError) {
-          console.error('❌ 미니 이미지 QR코드도 실패:', qrError);
-        }
-      }
-      
-      // 일반 크기 이미지로 QR코드 생성 시도
       try {
-        const qrCodeDataUrl = await QRCode.toDataURL(singleImageDataUrl, {
+        localStorage.setItem(`photo_single_${imageId}`, singleImageDataUrl);
+        console.log('📱 단일 이미지가 localStorage에 저장됨, ID:', imageId);
+      } catch (storageError) {
+        console.error('❌ localStorage 저장 실패:', storageError);
+        alert('이미지 저장에 실패했습니다. 브라우저 저장 공간이 부족합니다.');
+        return;
+      }
+      
+      // 이미지 뷰어 URL 생성
+      const viewerUrl = `${window.location.origin}${window.location.pathname}?view=image&id=${imageId}`;
+      console.log('🔗 뷰어 URL 생성:', viewerUrl);
+      
+      // QR코드 업데이트
+      try {
+        const qrCodeDataUrl = await QRCode.toDataURL(viewerUrl, {
           width: 150,
           margin: 2,
           color: {
             dark: '#1647C1',
             light: '#FFFFFF'
-          },
-          errorCorrectionLevel: 'L'
+          }
         });
         
         setQrCodeUrl(qrCodeDataUrl);
-        setQrTargetUrl(singleImageDataUrl);
-        console.log('📱 QR코드 생성 완료 (Data URL 방식)');
-        
+        setQrTargetUrl(viewerUrl); // 타겟 URL 업데이트
+        console.log('📱 QR코드가 뷰어 URL로 업데이트됨');
       } catch (qrError) {
-        console.error('❌ 모든 방식 실패:', qrError);
-        alert('이미지가 너무 커서 QR코드로 변환할 수 없습니다. 이미지 크기를 줄여주세요.');
+        console.error('QR코드 생성 오류:', qrError);
       }
     };
+
+    const handleSave = async () => {
+      if (!resultRef.current) return;
+
+      console.log('💾 고정 해상도 저장 시작 (2개 가로 배치)...');
+
+      // 폰트 로드 대기
+      try {
+        await document.fonts.load('300 38px PyeongChangPeace-Light');
+        await document.fonts.load('400 16px sans-serif');
+        console.log('🔤 폰트 로드 완료');
+      } catch (error) {
+        console.warn('⚠️ 폰트 로드 실패:', error);
+      }
+
+      await Promise.all(
+        Array.from(resultRef.current.querySelectorAll('img')).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(res => { img.onload = res; img.onerror = res; });
+        })
+      );
+
+      // 저장용 요소를 활성화 (화면에는 보이지 않음)
+      resultRef.current.classList.add('saving');
+      
+      console.log('📸 저장용 요소 활성화 중 (화면 뒤에서)...');
+
+      // 잠시 대기 (DOM 업데이트 완료 + 폰트 렌더링)
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      const canvas = await html2canvas(resultRef.current, {
+        scale: 2, // 고해상도로 캡처 (800x1200 -> 1600x2400)
+        width: 800, // 명시적으로 너비 지정
+        height: 1200, // 명시적으로 높이 지정
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: true, // 디버깅용 로그 활성화
+        allowTaint: true,
+        removeContainer: false,
+        foreignObjectRendering: false, // 폰트 렌더링을 위해 비활성화
+        imageTimeout: 15000, // 이미지 로딩 타임아웃 증가
+        onclone: (clonedDoc) => {
+          console.log('📋 문서 클론 중...');
+          
+          // 폰트 스타일을 명시적으로 적용
+          const style = clonedDoc.createElement('style');
+          style.textContent = `
+            @font-face {
+              font-family: 'PyeongChangPeace-Light';
+              src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Light.woff2') format('woff2');
+              font-weight: 300;
+              font-style: normal;
+            }
+            .result-logo-text {
+              font-family: 'PyeongChangPeace-Light', 'Malgun Gothic', sans-serif !important;
+              font-weight: 600 !important;
+            }
+          `;
+          clonedDoc.head.appendChild(style);
+          
+          // 이미지 품질 향상
+          const imgs = clonedDoc.querySelectorAll('img');
+          imgs.forEach(img => {
+            img.style.imageRendering = 'high-quality';
+          });
+        }
+      });
+
+      // 저장용 요소를 다시 비활성화
+      resultRef.current.classList.remove('saving');
+
+      console.log(`💾 저장 완료: ${canvas.width}x${canvas.height}px (화면에 표시되지 않음)`);
+
+      // 고품질 PNG로 저장 (압축 없음)
+      const dataUrl = canvas.toDataURL('image/png', 1.0); // 최고 품질
+      
+      // 현재 시간을 기반으로 고유 ID 생성
+      const imageId = Date.now().toString();
+      
+      // localStorage에 이미지 저장 (뷰어용)
+      localStorage.setItem(`photo_${imageId}`, dataUrl);
+      
+      // 단일 이미지 생성 및 저장 (뷰어용)
+      const singleImageCanvas = document.createElement('canvas');
+      const singleCtx = singleImageCanvas.getContext('2d');
+      
+      // 단일 이미지는 800x1200 크기로 (하나의 result-container와 동일)
+      singleImageCanvas.width = 800;
+      singleImageCanvas.height = 1200;
+      
+      // 흰색 배경
+      singleCtx.fillStyle = '#ffffff';
+      singleCtx.fillRect(0, 0, 800, 1200);
+      
+      // 원본 캔버스에서 첫 번째 이미지 영역 복사 (첫 번째 result-container)
+      singleCtx.drawImage(canvas, 0, 0, 800, 1200, 0, 0, 800, 1200);
+      
+      const singleImageDataUrl = singleImageCanvas.toDataURL('image/png', 1.0);
+      localStorage.setItem(`photo_single_${imageId}`, singleImageDataUrl);
+      
+      console.log('📱 이미지가 localStorage에 저장됨, ID:', imageId);
+      console.log('🖼️ 단일 이미지도 저장됨');
+      
+      // 이미지 뷰어 URL 생성
+      const viewerUrl = `${window.location.origin}${window.location.pathname}?view=image&id=${imageId}`;
+      console.log('🔗 뷰어 URL 생성:', viewerUrl);
+      
+      // QR코드 업데이트
+      try {
+        const qrCodeDataUrl = await QRCode.toDataURL(viewerUrl, {
+          width: 150,
+          margin: 2,
+          color: {
+            dark: '#1647C1',
+            light: '#FFFFFF'
+          }
+        });
+        
+        setQrCodeUrl(qrCodeDataUrl);
+        setQrTargetUrl(viewerUrl); // 타겟 URL 업데이트
+        console.log('📱 QR코드가 뷰어 URL로 업데이트됨');
+      } catch (qrError) {
+        console.error('QR코드 생성 오류:', qrError);
+      }
+      
+      // 다운로드 링크 생성
+      const link = document.createElement('a');
+      link.href = dataUrl;
+      
+      // 파일명에 타임스탬프 추가
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      link.download = `photo_result_${timestamp}.png`;
+      
+      // 파일 크기 확인용 로그
+      const base64Length = dataUrl.split(',')[1].length;
+      const sizeInBytes = (base64Length * 3) / 4;
+      const sizeInMB = (sizeInBytes / (1024 * 1024)).toFixed(2);
+      console.log(`📁 파일 크기: ${sizeInMB}MB`);
+      
+      link.click();
+    };
+
+    // 초기 QR코드 생성 함수
 
     // QR코드 클릭 핸들러
     const handleQRCodeClick = () => {
@@ -630,7 +687,7 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
             {isPrinting ? '프린트 중...' : '프린트'}
           </button>
           
-          {/* QR코드 생성 버튼 */}
+          {/* QR코드 표시 - 항상 영역 표시 */}
           <div className='qr-code-section'>
             <div className='qr-code-label'>이미지 공유</div>
             {qrCodeUrl ? (
@@ -643,13 +700,9 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
                 title="클릭하여 이미지 보기"
               />
             ) : (
-              <button 
-                className='qr-generate-btn'
-                onClick={handleQRCodeGenerate}
-                title="QR코드를 생성하여 이미지를 공유하세요"
-              >
-                QR 코드 생성
-              </button>
+              <div className='qr-code-placeholder'>
+                QR코드 생성 중...
+              </div>
             )}
           </div>
         </div>

@@ -3,6 +3,7 @@
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Light.woff2') format('woff2');
     font-weight: 300;
     font-style: normal;
+    font-display: swap; /* 폰트 로딩 최적화 */
 }
 
 *, 

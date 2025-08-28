@@ -7,16 +7,18 @@ export const fadeFilter = {
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
     p5js.fill(0, 0, 0, 10);
-    p5js.rect(0, 0, canvasW, canvasH);
+    p5js.rect(0, 0, p5js.width, p5js.height);
 
     offscreen.loadPixels();
     const pixels = offscreen.pixels;
     const expectedLength = 4 * captureW * captureH;
     if (!pixels || pixels.length < expectedLength) return;
 
-    // 캔버스 전체 크기에 맞춰 스케일링
-    const scaleX = canvasW / captureW;
-    const scaleY = canvasH / captureH;
+    // 실제 p5 캔버스 크기로 스케일링
+    const actualW = p5js.width;
+    const actualH = p5js.height;
+    const scaleX = actualW / captureW;
+    const scaleY = actualH / captureH;
     const baseDiameter = Math.min(scaleX, scaleY) * 5;
 
     for (let y = 0; y < captureH; y+= 10) {

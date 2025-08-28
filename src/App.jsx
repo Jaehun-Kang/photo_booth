@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FilterPreviewRender from './components/FilterPreviewRender';
 import FilterScreenRender from './components/FilterScreenRender';
 import WebcamErrorHandler from './components/WebcamErrorHandler';
+import ImageViewer from './components/ImageViewer';
 import './styles/App.css';
 
 function App() {
@@ -10,6 +11,10 @@ function App() {
   const [isVideoReady, setIsVideoReady] = useState(false);
   const [webcamError, setWebcamError] = useState(null);
   const [devicePixelRatio, setDevicePixelRatio] = useState(window.devicePixelRatio || 1);
+  
+  // URL에서 view 모드 확인
+  const urlParams = new URLSearchParams(window.location.search);
+  const isViewMode = urlParams.get('view') === 'image';
 
   // DPR 변화 감지 (디바이스 툴바 토글 시)
   useEffect(() => {
@@ -44,6 +49,11 @@ function App() {
     return <WebcamErrorHandler error={webcamError} />;
   }
 
+  // 이미지 뷰어 모드인 경우
+  if (isViewMode) {
+    return <ImageViewer />;
+  }
+
   return (
     <div className="App">
       {selectedFilter === null ? (
@@ -58,6 +68,7 @@ function App() {
         <FilterScreenRender
           filterIndex={selectedFilter}
           onBack={() => setSelectedFilter(null)}
+          onHome={() => setSelectedFilter(null)} // 홈 버튼용 동일한 동작
           selectedDeviceId={selectedDeviceId}
           onError={handleWebcamError}
         />

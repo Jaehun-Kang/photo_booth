@@ -6,6 +6,7 @@ import { filters } from '../filters';
 import '../styles/FilterPreviewRender.css';
 import WebcamErrorHandler from './WebcamErrorHandler.jsx';
 import CameraSelect from './CameraSelect.jsx';
+import { getCameraCapabilities, getPreviewResolution } from '../utils/cameraUtils.js';
 
 function FilterPreviewRender({ onSelectFilter, selectedDeviceId, onDeviceSelect, onVideoReady, onError }) {
   const [video, setVideo] = useState(null);
@@ -27,11 +28,17 @@ function FilterPreviewRender({ onSelectFilter, selectedDeviceId, onDeviceSelect,
     try {
       setVideoReady(false);
 
+      // 카메라 정보 가져오기 (캐시 사용)
+      const cameraInfo = await getCameraCapabilities(selectedDeviceId);
+      const previewResolution = getPreviewResolution(cameraInfo);
+      
+      console.log(`📹 프리뷰용 해상도 설정: ${previewResolution.width}x${previewResolution.height} (원본: ${cameraInfo.maxWidth}x${cameraInfo.maxHeight})`);
+
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
           deviceId: { exact: selectedDeviceId },
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
+          width: { ideal: previewResolution.width },
+          height: { ideal: previewResolution.height },
         }
       });
 
