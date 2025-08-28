@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import '../styles/ImageViewer.css';
 import shareIcon from '../assets/share.svg';
 
@@ -11,8 +11,85 @@ const ImageViewer = () => {
   const buttonsRef = useRef(null);
   const imageRef = useRef(null);
 
+  // 버튼 크기 기준으로 폰트와 아이콘 크기 조정
+  const adjustButtonSizes = useCallback(() => {
+    if (!buttonsRef.current) return;
+
+    const buttons = buttonsRef.current.querySelectorAll('.image-viewer__buttons--btn');
+    const buttonsContainer = buttonsRef.current;
+    
+    // 버튼 컨테이너의 높이 (10vh)
+    const containerHeight = buttonsContainer.getBoundingClientRect().height;
+    
+    buttons.forEach(button => {
+      const buttonHeight = button.getBoundingClientRect().height;
+      const buttonWidth = button.getBoundingClientRect().width;
+      
+      // 버튼 높이의 비율로 폰트 크기 계산 (높이의 25-30%)
+      const fontSize = Math.max(buttonHeight * 0.28, 14); // 최소 14px
+      
+      // 아이콘 크기는 버튼 높이의 60-70%
+      const iconSize = Math.max(buttonHeight * 0.65, 24); // 최소 24px
+      
+      // 폰트 크기 적용
+      button.style.fontSize = `${fontSize}px`;
+      
+      // 아이콘 크기 적용
+      const icon = button.querySelector('.icon');
+      if (icon) {
+        icon.style.width = `${iconSize}px`;
+        icon.style.height = `${iconSize}px`;
+      }
+      
+      console.log('🔧 버튼 크기 조정:', {
+        containerHeight: Math.round(containerHeight),
+        buttonHeight: Math.round(buttonHeight),
+        buttonWidth: Math.round(buttonWidth),
+        fontSize: Math.round(fontSize),
+        iconSize: Math.round(iconSize)
+      });
+    });
+  }, []);
+
+  // 헤더 크기 기준으로 로고와 텍스트 크기 조정
+  const adjustHeaderSizes = useCallback(() => {
+    if (!headerRef.current) return;
+
+    const headerContainer = headerRef.current;
+    const logoSvg = headerContainer.querySelector('.result-logo-svg');
+    const logoText = headerContainer.querySelector('.result-logo-text');
+    
+    // 헤더 컨테이너의 높이 (10vh)
+    const headerHeight = headerContainer.getBoundingClientRect().height;
+    
+    if (logoSvg && logoText) {
+      // 로고 크기는 헤더 높이의 70-80% (최소 80px, 최대 160px)
+      const logoSize = Math.min(Math.max(headerHeight * 0.75, 80), 160);
+      
+      // 텍스트 크기는 헤더 높이의 40-50% (최소 24px, 최대 60px)  
+      const textSize = Math.min(Math.max(headerHeight * 0.45, 24), 60);
+      
+      // 텍스트 margin-bottom은 로고 크기의 8%
+      const textMargin = logoSize * 0.08;
+      
+      // 스타일 적용
+      logoSvg.style.width = `${logoSize}px`;
+      logoSvg.style.height = `${logoSize}px`;
+      
+      logoText.style.fontSize = `${textSize}px`;
+      logoText.style.marginBottom = `${textMargin}px`;
+      
+      console.log('🏷️ 헤더 크기 조정:', {
+        headerHeight: Math.round(headerHeight),
+        logoSize: Math.round(logoSize),
+        textSize: Math.round(textSize),
+        textMargin: Math.round(textMargin)
+      });
+    }
+  }, []);
+
   // 이미지 크기 계산 함수
-  const calculateImageSize = () => {
+  const calculateImageSize = useCallback(() => {
     if (!headerRef.current || !buttonsRef.current) return;
 
     // 더 정확한 요소 크기 계산
@@ -58,7 +135,13 @@ const ImageViewer = () => {
       maxHeight: `${finalHeight}px`,
       objectFit: 'contain'
     });
-  };
+
+    // 버튼 크기도 함께 조정
+    setTimeout(() => {
+      adjustButtonSizes();
+      adjustHeaderSizes();
+    }, 50);
+  }, [adjustButtonSizes, adjustHeaderSizes]);
 
   // 이미지 로딩 에러 핸들러
   const handleImageError = (error) => {
@@ -247,7 +330,7 @@ const ImageViewer = () => {
         window.visualViewport.removeEventListener('resize', handleVisualViewportChange);
       }
     };
-  }, [imageData]); // imageData가 변경될 때마다 재계산
+  }, [imageData, adjustButtonSizes, adjustHeaderSizes, calculateImageSize]); // imageData가 변경될 때마다 재계산
 
   const downloadImage = async () => {
     if (!imageData) return;
