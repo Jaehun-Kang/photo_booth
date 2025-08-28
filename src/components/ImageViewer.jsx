@@ -136,48 +136,53 @@ const ImageViewer = () => {
     if (!imageData) return;
 
     try {
-      // Firebase Storage URL에서 직접 다운로드 시도
-      const urlParams = new URLSearchParams(window.location.search);
-      const firebaseUrlParam = urlParams.get('firebaseUrl');
+      console.log('📥 이미지 다운로드 시작...');
       
-      if (firebaseUrlParam) {
-        // Base64 디코딩하여 원본 Firebase URL 얻기
-        const originalFirebaseUrl = atob(firebaseUrlParam);
-        console.log('📥 Firebase URL로 직접 다운로드 시도:', originalFirebaseUrl);
-        
-        // Firebase URL에 다운로드 파라미터 추가
-        const downloadUrl = originalFirebaseUrl + '&response-content-disposition=attachment';
-        
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = `photobooth_${Date.now()}.png`;
-        link.target = '_blank'; // 새 탭에서 열기
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        console.log('✅ Firebase 직접 다운로드 링크 생성 완료');
-        return;
+      // fetch를 사용해서 이미지 데이터를 가져오기
+      const response = await fetch(imageData);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      // 일반적인 방식으로 다운로드
+      // 응답을 Blob으로 변환
+      const blob = await response.blob();
+      console.log('✅ 이미지 데이터 fetch 완료');
+      
+      // Blob을 다운로드 가능한 URL로 변환
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      // 다운로드 링크 생성
       const link = document.createElement('a');
-      link.href = imageData;
+      link.href = blobUrl;
       link.download = `photobooth_${Date.now()}.png`;
+      
+      // 링크를 DOM에 추가하고 클릭 (새 창에서 열리지 않음)
       document.body.appendChild(link);
       link.click();
+      
+      // 정리
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl); // 메모리 해제
+      
+      console.log('✅ 이미지 다운로드 완료');
       
     } catch (error) {
       console.error('❌ 다운로드 실패:', error);
       
-      // 실패 시 기본 방식으로 시도
-      const link = document.createElement('a');
-      link.href = imageData;
-      link.download = `photobooth_${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // 실패 시 기본 방식으로 시도 (target 제거)
+      try {
+        const link = document.createElement('a');
+        link.href = imageData;
+        link.download = `photobooth_${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        console.log('✅ 기본 방식으로 다운로드 시도');
+      } catch (fallbackError) {
+        console.error('❌ 기본 방식 다운로드도 실패:', fallbackError);
+        alert('다운로드에 실패했습니다. 이미지를 길게 터치해서 저장해보세요.');
+      }
     }
   };
 
