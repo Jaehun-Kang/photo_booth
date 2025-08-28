@@ -21,15 +21,83 @@ const ImageViewer = () => {
     // 버튼 컨테이너의 높이 (10vh)
     const containerHeight = buttonsContainer.getBoundingClientRect().height;
     
+    // 화면 배율 감지 (웨일 앱 접근성 설정 대응)
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const zoomLevel = Math.round((window.outerWidth / window.innerWidth) * 100) / 100;
+    const isZoomedOut = zoomLevel < 1 || devicePixelRatio < 1;
+    
+    console.log('🔍 화면 배율 정보:', {
+      devicePixelRatio,
+      zoomLevel,
+      outerWidth: window.outerWidth,
+      innerWidth: window.innerWidth,
+      isZoomedOut,
+      containerHeight
+    });
+    
+    // 웨일 앱에서 100% 이하 배율일 때 강제로 안전 모드 적용
+    if (isZoomedOut || containerHeight > window.innerHeight || containerHeight < 20) {
+      console.warn('🛡️ 배율 문제 또는 비정상적인 크기 감지 - 안전 모드 적용');
+      
+      // 뷰포트 기준으로 안전한 크기 계산
+      const safeHeight = Math.min(window.innerHeight * 0.08, 60); // 최대 60px로 제한
+      const fontSize = Math.min(Math.max(safeHeight * 0.3, 14), 20); // 14-20px
+      const iconSize = Math.min(Math.max(safeHeight * 0.6, 24), 40); // 24-40px
+      
+      buttons.forEach(button => {
+        button.style.fontSize = `${fontSize}px`;
+        
+        const icon = button.querySelector('.icon');
+        if (icon) {
+          icon.style.width = `${iconSize}px`;
+          icon.style.height = `${iconSize}px`;
+        }
+      });
+      
+      console.log('🛡️ 안전 모드 적용:', {
+        safeHeight: Math.round(safeHeight),
+        fontSize: Math.round(fontSize),
+        iconSize: Math.round(iconSize)
+      });
+      return;
+    }
+    
     buttons.forEach(button => {
       const buttonHeight = button.getBoundingClientRect().height;
       const buttonWidth = button.getBoundingClientRect().width;
       
-      // 버튼 높이의 비율로 폰트 크기 계산 (높이의 25-30%)
-      const fontSize = Math.max(buttonHeight * 0.28, 14); // 최소 14px
+      // 웨일 앱 등에서 비정상적인 값이 나올 경우 안전장치
+      if (buttonHeight > containerHeight * 2 || buttonHeight < 10 || containerHeight > window.innerHeight) {
+        console.warn('비정상적인 크기 감지 - 안전 모드 적용:', {
+          buttonHeight,
+          containerHeight,
+          windowHeight: window.innerHeight
+        });
+        
+        // 안전한 기본값 사용 (10vh 기준)
+        const safeHeight = window.innerHeight * 0.08; // 8vh 정도로 안전하게
+        const fontSize = Math.min(Math.max(safeHeight * 0.3, 14), 22); // 14-22px 제한
+        const iconSize = Math.min(Math.max(safeHeight * 0.6, 24), 44); // 24-44px 제한
+        
+        button.style.fontSize = `${fontSize}px`;
+        
+        const icon = button.querySelector('.icon');
+        if (icon) {
+          icon.style.width = `${iconSize}px`;
+          icon.style.height = `${iconSize}px`;
+        }
+        
+        console.log('🛡️ 안전 모드 적용:', {
+          safeHeight: Math.round(safeHeight),
+          fontSize: Math.round(fontSize),
+          iconSize: Math.round(iconSize)
+        });
+        return;
+      }
       
-      // 아이콘 크기는 버튼 높이의 60-70%
-      const iconSize = Math.max(buttonHeight * 0.65, 24); // 최소 24px
+      // 정상적인 경우 기존 로직 사용 (최대값 제한 추가)
+      const fontSize = Math.min(Math.max(buttonHeight * 0.28, 14), 22); // 최대 22px 제한
+      const iconSize = Math.min(Math.max(buttonHeight * 0.65, 24), 44); // 최대 44px 제한
       
       // 폰트 크기 적용
       button.style.fontSize = `${fontSize}px`;
@@ -62,10 +130,37 @@ const ImageViewer = () => {
     // 헤더 컨테이너의 높이 (10vh)
     const headerHeight = headerContainer.getBoundingClientRect().height;
     
+    // 화면 배율 감지 (웨일 앱 접근성 설정 대응)
+    const zoomLevel = Math.round((window.outerWidth / window.innerWidth) * 100) / 100;
+    const isZoomedOut = zoomLevel < 1 || window.devicePixelRatio < 1;
+    
     if (logoSvg && logoText) {
-      // 로고와 폰트 비율 130:48 기준으로 계산
-      // 헤더 높이의 70-80%를 기준으로 하되, 비율 유지
-      const baseSize = Math.min(Math.max(headerHeight * 0.75, 80), 160);
+      // 웨일 앱에서 100% 이하 배율이거나 비정상적인 높이일 때 안전 모드
+      if (isZoomedOut || headerHeight > window.innerHeight || headerHeight < 20) {
+        console.warn('헤더 배율 문제 감지 - 안전 모드 적용');
+        
+        // 뷰포트 기준으로 안전한 크기 계산 (130:48 비율 유지)
+        const safeHeaderHeight = Math.min(window.innerHeight * 0.08, 60); // 최대 60px
+        const logoSize = Math.min(Math.max(safeHeaderHeight * 0.75, 60), 120); // 60-120px
+        const textSize = Math.round(logoSize * (48 / 130)); // 130:48 비율 유지
+        const textMargin = Math.round(logoSize * 0.08); // 로고 크기의 8%
+        
+        logoSvg.style.width = `${logoSize}px`;
+        logoSvg.style.height = `${logoSize}px`;
+        logoText.style.fontSize = `${textSize}px`;
+        logoText.style.marginBottom = `${textMargin}px`;
+        
+        console.log('헤더 안전 모드:', {
+          safeHeaderHeight: Math.round(safeHeaderHeight),
+          logoSize: Math.round(logoSize),
+          textSize: Math.round(textSize),
+          textMargin: Math.round(textMargin)
+        });
+        return;
+      }
+      
+      // 정상적인 경우 기존 로직 사용 (최대값 제한 추가)
+      const baseSize = Math.min(Math.max(headerHeight * 0.75, 80), 140); // 최대 140px로 제한
       
       // 130:48 비율 유지 (130/48 = 2.708...)
       const logoSize = baseSize;
@@ -169,7 +264,7 @@ const ImageViewer = () => {
 
   // 이미지 로딩 성공 핸들러
   const handleImageLoad = () => {
-    console.log('🖼️ 이미지 로딩 성공 - 그림자 적용됨');
+    console.log('이미지 로딩 성공 - 그림자 적용됨');
     setImageError(null);
     
     // 이미지 로드 후 크기 재계산
@@ -401,7 +496,7 @@ const ImageViewer = () => {
         
         await navigator.share({
           title: 'PhotoBooth 이미지',
-          text: '포토부스에서 찍은 사진입니다!',
+          text: '마법연구회 포토부스에서 찍은 사진입니다!',
           files: [file]
         });
       } catch (error) {
