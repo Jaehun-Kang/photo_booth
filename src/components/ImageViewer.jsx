@@ -21,7 +21,10 @@ const ImageViewer = () => {
     
     const headerHeight = headerRect.height;
     const buttonsHeight = buttonsRect.height;
-    const padding = 40; // 상하 패딩 (20px * 2)
+    const isMobile = window.innerWidth <= 768;
+    
+    // 모바일과 데스크톱에서 다른 패딩 적용
+    const padding = isMobile ? 55 : 40; // 모바일에서 더 큰 패딩 (40px + 15px)
     const gap = 32; // grid gap (1rem * 2)
     const shadowPadding = 24; // 그림자를 위한 여백 (12px * 2)
     
@@ -36,8 +39,9 @@ const ImageViewer = () => {
     const minHeight = Math.min(200, window.innerHeight * 0.3);
     const finalHeight = Math.max(availableHeight, minHeight);
     
-    console.log('🖼️ 이미지 크기 계산 (그림자 포함):', {
+    console.log('🖼️ 이미지 크기 계산 (모바일 대응):', {
       windowSize: `${window.innerWidth}x${window.innerHeight}`,
+      isMobile,
       headerHeight,
       buttonsHeight,
       availableHeight,

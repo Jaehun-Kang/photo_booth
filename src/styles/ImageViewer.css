@@ -32,6 +32,11 @@
 .image-viewer__header .result-logo-svg {
   width: 100px;
 }
+@media (max-width: 768px) {
+  .image-viewer__header .result-logo-svg {
+    width: 120px;
+  }
+}
 .image-viewer__header .result-logo-text {
   position: relative;
   margin-bottom: 8%;
@@ -41,6 +46,11 @@
   font-family: "PyeongChangPeace-Light", "Malgun Gothic", "Nanum Gothic", sans-serif;
   font-weight: 400;
   font-display: swap;
+}
+@media (max-width: 768px) {
+  .image-viewer__header .result-logo-text {
+    font-size: 40px;
+  }
 }
 .image-viewer__image {
   width: 100%;
@@ -77,6 +87,13 @@
   flex-shrink: 0;
   min-height: 80px;
 }
+@media (max-width: 768px) {
+  .image-viewer__buttons {
+    gap: 20px;
+    padding-block: 40px 15px;
+    min-height: 100px;
+  }
+}
 .image-viewer__buttons--btn {
   padding: 8px 8px;
   border-radius: 12px;
@@ -90,6 +107,13 @@
   justify-content: center;
   gap: 0.5rem;
   border: none;
+}
+@media (max-width: 768px) {
+  .image-viewer__buttons--btn {
+    padding: 14px 16px;
+    font-size: 18px;
+    border-radius: 16px;
+  }
 }
 .image-viewer__buttons--btn.primary {
   background: #fff;
@@ -114,6 +138,12 @@
   width: 42px;
   height: 42px;
   flex-shrink: 0;
+}
+@media (max-width: 768px) {
+  .image-viewer__buttons--btn .icon {
+    width: 52px;
+    height: 52px;
+  }
 }
 .image-viewer__buttons--btn.warning {
   background: #ff9800;

@@ -29,6 +29,11 @@
 
       &-svg {
         width: 100px;
+        
+        // 모바일에서 더 크게
+        @media (max-width: 768px) {
+          width: 120px;
+        }
       }
 
       &-text {
@@ -40,6 +45,11 @@
         font-family: 'PyeongChangPeace-Light', 'Malgun Gothic', 'Nanum Gothic', sans-serif;
         font-weight: 400;
         font-display: swap;
+        
+        // 모바일에서 더 크게
+        @media (max-width: 768px) {
+          font-size: 40px;
+        }
       }
     }
   }
@@ -81,6 +91,13 @@
     flex-shrink: 0; // 크기 고정
     min-height: 80px; // 최소 높이 보장
     
+    // 모바일에서 더 큰 간격
+    @media (max-width: 768px) {
+      gap: 20px;
+      padding-block: 40px 15px;
+      min-height: 100px;
+    }
+    
     &--btn {
       padding: 8px 8px;
       border-radius: 12px;
@@ -94,6 +111,13 @@
       justify-content: center;
       gap: .5rem;
       border: none;
+      
+      // 모바일에서 더 큰 크기
+      @media (max-width: 768px) {
+        padding: 14px 16px;
+        font-size: 18px;
+        border-radius: 16px;
+      }
 
       &.primary {
         background: #fff;
@@ -122,6 +146,12 @@
         width: 42px;
         height: 42px;
         flex-shrink: 0;
+        
+        // 모바일에서 아이콘도 더 크게
+        @media (max-width: 768px) {
+          width: 52px;
+          height: 52px;
+        }
       }
 
       &.warning {
