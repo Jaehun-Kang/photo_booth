@@ -51,8 +51,9 @@
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    overflow: hidden; // 이미지가 넘치는 것 방지
+    overflow: visible; // 그림자가 잘리지 않도록 변경
     min-height: 200px; // 최소 높이 보장
+    padding: 12px; // 그림자를 위한 여백
     
     &--img {
       max-width: 100%;
@@ -64,7 +65,9 @@
       image-rendering: high-quality;
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      // drop-shadow는 이미지의 실제 형태를 따라감
+      filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
+      transition: filter 0.3s ease; // 부드러운 전환
     }
   }
 

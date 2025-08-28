@@ -23,25 +23,27 @@ const ImageViewer = () => {
     const buttonsHeight = buttonsRect.height;
     const padding = 40; // 상하 패딩 (20px * 2)
     const gap = 32; // grid gap (1rem * 2)
+    const shadowPadding = 24; // 그림자를 위한 여백 (12px * 2)
     
     // 모바일에서 더 안전한 여백 계산
     const safeAreaTop = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0');
     const safeAreaBottom = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sab') || '0');
     
-    const availableHeight = window.innerHeight - headerHeight - buttonsHeight - padding - gap - safeAreaTop - safeAreaBottom;
-    const availableWidth = window.innerWidth - 40; // 좌우 패딩
+    const availableHeight = window.innerHeight - headerHeight - buttonsHeight - padding - gap - safeAreaTop - safeAreaBottom - shadowPadding;
+    const availableWidth = window.innerWidth - 40 - shadowPadding; // 좌우 패딩 + 그림자 여백
     
     // 최소 높이 보장 (모바일에서 너무 작아지는 것 방지)
     const minHeight = Math.min(200, window.innerHeight * 0.3);
     const finalHeight = Math.max(availableHeight, minHeight);
     
-    console.log('🖼️ 이미지 크기 계산:', {
+    console.log('🖼️ 이미지 크기 계산 (그림자 포함):', {
       windowSize: `${window.innerWidth}x${window.innerHeight}`,
       headerHeight,
       buttonsHeight,
       availableHeight,
       finalHeight,
       availableWidth,
+      shadowPadding,
       safeArea: `top:${safeAreaTop}, bottom:${safeAreaBottom}`
     });
     
@@ -77,8 +79,13 @@ const ImageViewer = () => {
 
   // 이미지 로딩 성공 핸들러
   const handleImageLoad = () => {
-    console.log('이미지 로딩 성공');
+    console.log('🖼️ 이미지 로딩 성공 - 그림자 적용됨');
     setImageError(null);
+    
+    // 이미지 로드 후 크기 재계산
+    setTimeout(() => {
+      calculateImageSize();
+    }, 100);
   };
 
   useEffect(() => {
