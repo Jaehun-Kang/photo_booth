@@ -555,6 +555,27 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
         
         {/* 프린트 컨트롤 */}
         <div className='print-controls'>
+          {/* QR코드 생성 버튼 */}
+          <div className='qr-code-section'>
+            {qrCodeUrl ? (
+              <img 
+                src={qrCodeUrl} 
+                alt="QR Code for download" 
+                className='qr-code' 
+                onClick={handleQRCodeClick}
+                style={{ cursor: 'pointer' }}
+                title="클릭하여 이미지 보기"
+              />
+            ) : (
+              <button 
+                className='qr-generate-btn'
+                onClick={handleQRCodeGenerate}
+                title="QR코드를 생성하여 이미지를 공유하세요"
+              >
+                QR 코드 생성
+              </button>
+            )}
+          </div>
           <div className='print-copies'>
             <div className='copies-control'>
               <button 
@@ -582,28 +603,6 @@ function FilterScreenRender({ filterIndex, onBack, onHome, selectedDeviceId, onE
             {isPrinting ? '프린트 중...' : '프린트'}
           </button>
           
-          {/* QR코드 생성 버튼 */}
-          <div className='qr-code-section'>
-            <div className='qr-code-label'>이미지 공유</div>
-            {qrCodeUrl ? (
-              <img 
-                src={qrCodeUrl} 
-                alt="QR Code for download" 
-                className='qr-code' 
-                onClick={handleQRCodeClick}
-                style={{ cursor: 'pointer' }}
-                title="클릭하여 이미지 보기"
-              />
-            ) : (
-              <button 
-                className='qr-generate-btn'
-                onClick={handleQRCodeGenerate}
-                title="QR코드를 생성하여 이미지를 공유하세요"
-              >
-                QR 코드 생성
-              </button>
-            )}
-          </div>
         </div>
         
         <div className='btn_container'>

@@ -100,11 +100,10 @@
     
     // 저장할 때만 불투명하게 (하지만 여전히 뒤에 숨겨짐)
     &.saving {
-      opacity: 1; // 렌더링을 위해 불투명하게
-      z-index: -9999; // 여전히 뒤에 숨김
+      opacity: 1;
+      z-index: -9999;
     }
     
-    // forSave 내부의 result-container는 position: static으로 재설정
     .result-container {
       position: static !important;
       transform: none !important;
@@ -124,15 +123,11 @@
     padding-inline: 18px;
     background: rgb(255, 255, 255);
     cursor: pointer;
-    
-    // 절대 위치로 중앙 배치
     position: absolute;
     top: 50%;
     left: 50%;
     transform-origin: center center;
-    transform: translate(-50%, -50%); // 기본 중앙 정렬
-    
-    // JavaScript에서 scale과 translate를 함께 적용
+    transform: translate(-50%, -50%);
   }
 
   &-frame {
@@ -146,14 +141,9 @@
       height: 242px;
       object-fit: cover;
       display: block;
-      image-rendering: high-quality; // 고품질 이미지 렌더링
-      image-rendering: -webkit-optimize-contrast; // 웹킷 최적화
-      image-rendering: crisp-edges; // 선명한 가장자리
-
-      // width: 100%;
-      // height: auto;
-      // object-fit: contain;
-      // display: block;
+      image-rendering: high-quality;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
     }
   }
 
@@ -181,7 +171,7 @@
       font-size: 38px;
       font-family: 'PyeongChangPeace-Light', 'Malgun Gothic', 'Nanum Gothic', sans-serif;
       font-weight: 600;
-      font-display: swap; // 폰트 로딩 최적화
+      font-display: swap;
 
       &-date {
         position: absolute;
@@ -296,25 +286,14 @@
   }
 
   .qr-code-section {
-    margin-top: 20px;
+    margin-bottom: 20px;
     text-align: center;
-    border: 3px solid rgba(22, 71, 193, 0.6); // 더 눈에 띄는 테두리
-    padding: 20px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.2);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     
-    .qr-code-label {
-      font-size: 14px;
-      color: white;
-      margin-bottom: 15px;
-      font-weight: bold;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    }
-    
     .qr-code {
-      width: 150px;
-      height: 150px;
+      width: 200px;
+      height: 200px;
       border: 3px solid rgb(22, 71, 193);
       border-radius: 8px;
       background: white;
@@ -325,8 +304,8 @@
     }
     
     .qr-code-placeholder {
-      width: 150px;
-      height: 150px;
+      width: 200px;
+      height: 200px;
       border: 3px dashed rgb(22, 71, 193);
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.8);
@@ -342,8 +321,8 @@
     }
     
     .qr-generate-btn {
-      width: 150px;
-      height: 150px;
+      width: 200px;
+      height: 200px;
       border: 3px solid rgb(22, 71, 193);
       border-radius: 8px;
       background: rgb(22, 71, 193);

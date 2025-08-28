@@ -1,172 +1,137 @@
 .image-viewer {
-  min-height: 100vh;
-  width: 100vw;
-  background-color: rgb(22.71, 69.44, 193.6); /* FilterScreenRender와 동일한 배경 */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  height: 100vh;
+  background-color: rgb(22.71, 69.44, 193.6);
+  display: grid;
+  grid-template-rows: min-content 1fr min-content;
   justify-content: center;
-  padding: 0; /* 여백 제거 */
-  font-family: 'Arial', sans-serif;
-  overflow: hidden; /* 화면 밖으로 나가는 것 방지 */
+  padding: 10px 0;
+  font-family: "Arial", sans-serif;
+  box-sizing: border-box;
 }
-
 .image-viewer__header {
   text-align: center;
-  margin-bottom: 20px;
-  padding: 20px;
+  margin-bottom: -20px;
 }
-
-.image-viewer__header h1 {
-  color: white;
-  font-size: 2rem;
-  margin-bottom: 5px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.image-viewer__header p {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1rem;
-  margin: 0;
-}
-
-.image-viewer__content {
-  background: rgba(255, 255, 255, 1); /* 완전 불투명한 흰색 배경 */
-  border-radius: 0; /* 모서리 둥글게 제거 */
-  padding: 20px 18px; /* FilterScreenRender와 동일한 패딩 */
-  box-shadow: none; /* 그림자 제거 */
-  width: 400px; /* FilterScreenRender와 동일한 너비 */
-  max-width: 400px;
-  height: auto;
-  max-height: none;
-  display: flex;
-  flex-direction: column;
+.image-viewer__header .result-logo {
+  display: grid;
+  grid-template-columns: min-content min-content;
   align-items: center;
+  justify-items: center;
+  justify-content: center;
+  -moz-column-gap: 24px;
+       column-gap: 24px;
+  padding-bottom: 8px;
+  width: 100%;
+  height: -moz-min-content;
+  height: min-content;
+  color: white;
+}
+.image-viewer__header .result-logo-svg {
+  width: 100px;
+}
+.image-viewer__header .result-logo-text {
   position: relative;
+  margin-bottom: 8%;
+  padding-bottom: 0;
+  word-break: keep-all;
+  font-size: 34px;
+  font-family: "PyeongChangPeace-Light", "Malgun Gothic", "Nanum Gothic", sans-serif;
+  font-weight: 400;
+  font-display: swap;
 }
-
-.image-viewer__footer {
-  margin-top: 20px;
-  text-align: center;
-}
-
-.image-viewer__footer p {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-.image-viewer .image-container {
-  margin-bottom: 20px;
-  border-radius: 0; /* 모서리 둥글게 제거 */
-  overflow: hidden;
-  box-shadow: none; /* 그림자 제거 */
-  width: 100%; /* 컨테이너 전체 너비 사용 */
+.image-viewer__image {
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
 }
-
-.image-viewer .image-container .shared-image {
-  width: 364px; /* FilterScreenRender의 이미지와 동일한 크기 */
-  height: auto;
+.image-viewer__image--img {
   max-width: 100%;
-  max-height: none;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   display: block;
-  object-fit: cover; /* FilterScreenRender와 동일한 object-fit */
-  image-rendering: high-quality; /* 고품질 이미지 렌더링 */
-  image-rendering: -webkit-optimize-contrast; /* 웹킷 최적화 */
-  image-rendering: crisp-edges; /* 선명한 가장자리 */
+  -o-object-fit: contain;
+     object-fit: contain;
+  image-rendering: high-quality;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
-
-.image-viewer .image-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.image-viewer__buttons {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
   width: 100%;
-  max-width: 300px;
-  margin-bottom: 1rem;
+  justify-self: center;
+  padding-block: 32px 10px;
 }
-
-.image-viewer .action-btn {
-  padding: 1rem 2rem;
-  border: none;
+.image-viewer__buttons--btn {
+  padding: 8px 8px;
   border-radius: 12px;
-  font-size: 1rem;
+  font-size: 14.4px;
   font-weight: 600;
+  line-height: 100%;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  border: none;
 }
-
-.image-viewer .action-btn--primary {
-  background: #4CAF50;
-  color: white;
+.image-viewer__buttons--btn.primary {
+  background: #fff;
+  color: rgb(22.71, 69.44, 193.6);
 }
-
-.image-viewer .action-btn--primary:hover {
-  background: #45a049;
+.image-viewer__buttons--btn.primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
-
-.image-viewer .action-btn--secondary {
-  background: rgba(22, 71, 193, 0.9);
+.image-viewer__buttons--btn.secondary {
+  aspect-ratio: 1;
+  background: rgb(22.71, 69.44, 193.6);
   color: white;
+  border: 2px solid #fff;
 }
-
-.image-viewer .action-btn--secondary:hover {
-  background: rgba(22, 71, 193, 1);
+.image-viewer__buttons--btn.secondary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(22, 71, 193, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
-
-.image-viewer .action-btn--warning {
+.image-viewer__buttons--btn .icon {
+  display: block;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+}
+.image-viewer__buttons--btn.warning {
   background: #ff9800;
   color: white;
 }
-
-.image-viewer .action-btn--warning:hover {
+.image-viewer__buttons--btn.warning:hover {
   background: #f57c00;
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(255, 152, 0, 0.3);
 }
-
-.image-viewer .image-info {
-  text-align: center;
-  color: #666;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  margin-top: 0.5rem;
-}
-
-.image-viewer .image-info p {
-  margin: 0;
-}
-
 .image-viewer .loading, .image-viewer .error {
   text-align: center;
   color: white;
 }
-
 .image-viewer .loading h2, .image-viewer .error h2 {
   font-size: 2rem;
   margin-bottom: 10px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
-
 .image-viewer .loading p, .image-viewer .error p {
   font-size: 1.1rem;
   opacity: 0.9;
 }
-
 .image-viewer .loading {
   font-size: 1.2rem;
   animation: pulse 2s ease-in-out infinite;
 }
-
 .image-viewer .image-error {
   margin-top: 1rem;
   padding: 1rem;
@@ -176,32 +141,10 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.7; }
-  50% { opacity: 1; }
-}
-
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-  .image-viewer {
-    padding: 0;
+  0%, 100% {
+    opacity: 0.7;
   }
-  
-  .image-viewer__header {
-    padding: 15px;
-  }
-  
-  .image-viewer__header h1 {
-    font-size: 1.8rem;
-  }
-  
-  .image-viewer__content {
-    width: 95vw;
-    max-width: 400px;
-    padding: 15px;
-  }
-  
-  .image-viewer .shared-image {
-    width: 100%;
-    max-width: 364px;
+  50% {
+    opacity: 1;
   }
 }
