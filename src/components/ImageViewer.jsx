@@ -279,7 +279,7 @@ const ImageViewer = () => {
       // html2canvas가 생성한 컨테이너들 정리
       const containers = document.querySelectorAll('[class*="html2canvas-container"]');
       containers.forEach(container => {
-        console.log('🧹 html2canvas-container 정리:', container);
+        console.log('html2canvas-container 정리:', container);
         container.remove();
       });
       
@@ -287,7 +287,7 @@ const ImageViewer = () => {
       const canvasElements = document.querySelectorAll('canvas[style*="position: absolute"]');
       canvasElements.forEach(canvas => {
         if (canvas.parentElement && canvas.parentElement !== document.body) {
-          console.log('🧹 임시 canvas 요소 정리:', canvas);
+          console.log('임시 canvas 요소 정리:', canvas);
           canvas.remove();
         }
       });

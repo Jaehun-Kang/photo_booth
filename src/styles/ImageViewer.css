@@ -71,8 +71,6 @@
   image-rendering: high-quality;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
-  transition: filter 0.3s ease;
 }
 .image-viewer__buttons {
   position: fixed;
