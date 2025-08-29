@@ -10,6 +10,7 @@
     "preview": "cross-env BROWSER=chrome vite preview"
   },
   "dependencies": {
+    "cross-env": "^7.0.3",
     "firebase": "^12.1.0",
     "html2canvas": "^1.4.1",
     "p5": "^2.0.3",
@@ -22,7 +23,6 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.2",
-    "cross-env": "^7.0.3",
     "eslint": "^9.29.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
