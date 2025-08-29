@@ -1,5 +1,5 @@
-import React from 'react';
-import '../styles/Overlay.css';
+import React from "react";
+import "../styles/Overlay.css";
 
 function Overlay({ onStartCapture, countdown, showFlash, captureProgress }) {
   return (

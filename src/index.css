@@ -1,18 +1,20 @@
 @font-face {
-    font-family: 'PyeongChangPeace-Light';
-    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Light.woff2') format('woff2');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap; /* 폰트 로딩 최적화 */
+  font-family: "PyeongChangPeace-Light";
+  src: url("https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/PyeongChangPeace-Light.woff2")
+    format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap; /* 폰트 로딩 최적화 */
 }
 
-*, 
-*::before, 
+*,
+*::before,
 *::after {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   background-color: #fff;
@@ -22,7 +24,13 @@ html, body {
   overflow: hidden;
 }
 
-h1, h2, h3, h4, h5, h6, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   margin: 0;
   padding: 0;
 }

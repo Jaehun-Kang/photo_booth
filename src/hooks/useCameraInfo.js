@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export function useCameraInfo() {
   const [videoSize, setVideoSize] = useState(null);
@@ -15,16 +15,16 @@ export function useCameraInfo() {
         const capabilities = track.getCapabilities();
 
         if (capabilities.width && capabilities.height) {
-          stream.getTracks().forEach(t => t.stop());
+          stream.getTracks().forEach((t) => t.stop());
           stream = await navigator.mediaDevices.getUserMedia({
             video: {
               width: { ideal: capabilities.width.max },
               height: { ideal: capabilities.height.max },
-            }
+            },
           });
         }
 
-        const video = document.createElement('video');
+        const video = document.createElement("video");
         video.srcObject = stream;
 
         await new Promise((resolve) => {
@@ -40,9 +40,9 @@ export function useCameraInfo() {
         setVideoSize(resolution);
         setCameraReady(true);
 
-        stream.getTracks().forEach(t => t.stop());
+        stream.getTracks().forEach((t) => t.stop());
       } catch (err) {
-        console.error('Failed to get camera resolution:', err);
+        console.error("Failed to get camera resolution:", err);
         setError(err);
         setCameraReady(true);
       }
@@ -52,7 +52,7 @@ export function useCameraInfo() {
 
     return () => {
       if (stream) {
-        stream.getTracks().forEach(t => t.stop());
+        stream.getTracks().forEach((t) => t.stop());
       }
     };
   }, []);

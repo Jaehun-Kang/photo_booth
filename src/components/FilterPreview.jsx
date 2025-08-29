@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
-import p5 from 'p5';
+import React, { useRef, useEffect, useLayoutEffect, useState } from "react";
+import p5 from "p5";
 
 const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
   const containerRef = useRef(null);
@@ -33,7 +33,7 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
       const height = width * ratio;
       if (width === 0 || height === 0) return;
 
-      setSize(prev => {
+      setSize((prev) => {
         if (
           prev &&
           Math.abs(prev.width - width) < 2 &&
@@ -64,11 +64,11 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
   // p5 인스턴스 생성 및 제거
   useEffect(() => {
     if (!containerRef.current) {
-      console.log('[FilterPreview] useEffect aborted: no container');
+      console.log("[FilterPreview] useEffect aborted: no container");
       return;
     }
     if (!size || size.width === 0 || size.height === 0) {
-      console.log('[FilterPreview] useEffect aborted: invalid size');
+      console.log("[FilterPreview] useEffect aborted: invalid size");
       return;
     }
 
@@ -95,11 +95,14 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
 
       // 생성 전 마지막 정리 확인
       if (containerRef.current) {
-        const canvases = containerRef.current.querySelectorAll('canvas');
+        const canvases = containerRef.current.querySelectorAll("canvas");
         if (canvases.length > 0) {
           console.log(`생성 전 잔여 캔버스 ${canvases.length}개 정리`);
           canvases.forEach((canvas, index) => {
-            console.log(`  - 생성전 캔버스 ${index + 1} 제거:`, canvas.id || 'unnamed');
+            console.log(
+              `  - 생성전 캔버스 ${index + 1} 제거:`,
+              canvas.id || "unnamed"
+            );
             canvas.remove();
           });
         }
@@ -107,11 +110,11 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
 
       const canvasWidth = containerRef.current.clientWidth;
       const canvasHeight = containerRef.current.clientHeight;
-      
+
       // 3:2 비율에 맞춰 실제 캔버스 크기 계산
       const targetAspect = 3 / 2;
       const containerAspect = canvasWidth / canvasHeight;
-      
+
       let actualWidth, actualHeight;
       if (containerAspect > targetAspect) {
         // 컨테이너가 더 넓은 경우: 높이 기준으로 너비 계산
@@ -122,7 +125,7 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
         actualWidth = canvasWidth;
         actualHeight = actualWidth / targetAspect;
       }
-      
+
       const sketch = sketchFactory(actualWidth, actualHeight);
       p5InstanceRef.current = new p5(sketch, containerRef.current);
 
@@ -146,17 +149,23 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
 
         // 2단계: 남은 캔버스 요소들 강제 제거
         if (containerRef.current) {
-          const canvases = containerRef.current.querySelectorAll('canvas');
+          const canvases = containerRef.current.querySelectorAll("canvas");
           console.log(`유령 캔버스 정리: ${canvases.length}개 발견`);
           canvases.forEach((canvas, index) => {
-            console.log(`  - 캔버스 ${index + 1} 제거:`, canvas.id || 'unnamed');
+            console.log(
+              `  - 캔버스 ${index + 1} 제거:`,
+              canvas.id || "unnamed"
+            );
             canvas.remove();
           });
-          
+
           // 3단계: DOM 정리 확인
-          const remainingCanvases = containerRef.current.querySelectorAll('canvas');
+          const remainingCanvases =
+            containerRef.current.querySelectorAll("canvas");
           if (remainingCanvases.length > 0) {
-            console.warn(`제거되지 않은 캔버스 ${remainingCanvases.length}개 발견`);
+            console.warn(
+              `제거되지 않은 캔버스 ${remainingCanvases.length}개 발견`
+            );
           }
         }
 
@@ -190,27 +199,27 @@ const FilterPreview = ({ sketchFactory, video, onSelectFilter }) => {
       ref={containerRef}
       onClick={onSelectFilter}
       style={{
-        width: '100%',
-        aspectRatio: '3 / 2', // ← 비율 고정
-        position: 'relative',
-        backgroundColor: '#111',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        width: "100%",
+        aspectRatio: "3 / 2", // ← 비율 고정
+        position: "relative",
+        backgroundColor: "#111",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       {!ready && (
         <div
           style={{
-            position: 'absolute',
+            position: "absolute",
             inset: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#aaa',
-            fontSize: '1.2rem',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#aaa",
+            fontSize: "1.2rem",
             zIndex: 1,
-            backgroundColor: '#111',
+            backgroundColor: "#111",
           }}
         >
           loading...

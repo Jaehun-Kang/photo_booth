@@ -1,6 +1,6 @@
 // Firebase 설정
-import { initializeApp } from 'firebase/app';
-import { getStorage } from 'firebase/storage';
+import { initializeApp } from "firebase/app";
+import { getStorage } from "firebase/storage";
 
 // Firebase 프로젝트 설정
 const firebaseConfig = {
@@ -11,7 +11,7 @@ const firebaseConfig = {
   storageBucket: "mrs-photobooth.firebasestorage.app",
   messagingSenderId: "791306015325",
   appId: "1:791306015325:web:3affd20cf828a97aea73b4",
-  measurementId: "G-K8QN0TL66D"
+  measurementId: "G-K8QN0TL66D",
 };
 
 // Firebase 앱 초기화

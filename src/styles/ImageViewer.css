@@ -151,16 +151,19 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(255, 152, 0, 0.3);
 }
-.image-viewer .loading, .image-viewer .error {
+.image-viewer .loading,
+.image-viewer .error {
   text-align: center;
   color: white;
 }
-.image-viewer .loading h2, .image-viewer .error h2 {
+.image-viewer .loading h2,
+.image-viewer .error h2 {
   font-size: 2rem;
   margin-bottom: 10px;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
-.image-viewer .loading p, .image-viewer .error p {
+.image-viewer .loading p,
+.image-viewer .error p {
   font-size: 1.1rem;
   opacity: 0.9;
 }

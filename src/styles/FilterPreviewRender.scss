@@ -28,7 +28,7 @@
     }
 
     &--text {
-      font-family: 'PyeongChangPeace-Light';
+      font-family: "PyeongChangPeace-Light";
       font-size: 3rem;
       font-weight: 400;
       // text-align: right;
@@ -59,7 +59,6 @@
   }
 }
 
-
 .cam_grid--section {
   overflow: hidden;
   height: 100%;
@@ -76,7 +75,7 @@
 
     &--filter {
       aspect-ratio: 364 / 242; // ← 16/9 대신 364/242로 변경
-      border-radius: .25rem;
+      border-radius: 0.25rem;
       border: 2px solid rgb(63.84, 117.94, 245.48);
       overflow: hidden;
     }
@@ -93,9 +92,9 @@
   padding-bottom: 2rem;
 
   p {
-  font-size: 2rem;
-  font-weight: 400;
-  text-align: center;
-  margin-block: 1.25rem;
+    font-size: 2rem;
+    font-weight: 400;
+    text-align: center;
+    margin-block: 1.25rem;
   }
 }

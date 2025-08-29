@@ -1,8 +1,7 @@
 export const cameraView = {
-  setup(p5js) {
-  },
+  setup(p5js) {},
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    p5js.image(offscreen, 0, 0, p5js.width, p5js.height);
-  }
+    p5js.image(offscreen, 0, 0, canvasW, canvasH);
+  },
 };

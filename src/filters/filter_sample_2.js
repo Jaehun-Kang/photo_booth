@@ -20,8 +20,8 @@ export const fadeFilter = {
     const scaleY = actualH / captureH;
     const baseDiameter = Math.min(scaleX, scaleY) * 5;
 
-    for (let y = 0; y < captureH; y+= 10) {
-      for (let x = 0; x < captureW; x+= 10) {
+    for (let y = 0; y < captureH; y += 10) {
+      for (let x = 0; x < captureW; x += 10) {
         const idx = 4 * (y * captureW + x);
         const r = pixels[idx];
         const g = pixels[idx + 1];
@@ -41,5 +41,5 @@ export const fadeFilter = {
         }
       }
     }
-  }
+  },
 };
