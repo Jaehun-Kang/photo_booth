@@ -1,53 +1,48 @@
-// src/filters/filter_stripe_flip.js 등으로 저장
 export const templateFilter3 = {
   setup(p5js) {
-    p5js.pixelDensity(1);
+    p5js.noStroke();
     p5js.imageMode(p5js.CORNER);
   },
 
-  // offscreen: 비디오 프레임, canvasW/H: 캔버스, captureW/H: 비디오 원본
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    const numSlices = 20; // 세로 줄 개수
-    const dSliceW = canvasW / numSlices; // 캔버스 한 줄 너비
-    const sSliceW = captureW / numSlices; // 원본 한 줄 너비
+    p5js.background(255);
 
-    // 배경 비우기(필요 시 배경색 지정 가능)
-    p5js.clear();
+    const cols = 10;
+    const rows = 10;
 
-    for (let i = 0; i < numSlices; i++) {
-      const dx = i * dSliceW; // 목적지 X
-      const sx = Math.floor(i * sSliceW); // 소스 X
+    // 각 셀의 캔버스 크기
+    const cellW = canvasW / cols;
+    const cellH = canvasH / rows;
 
-      if (i % 2 === 0) {
-        // 짝수 줄: 그대로
-        p5js.image(
-          offscreen,
-          dx,
+    // 캡처 크기 설정 (캡처 화면에서 잘라올 부분의 크기)
+    const grabW = captureW * 0.2;
+    const grabH = captureH * 0.2;
+
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        // [-1, 1] 범위로 위치 비율 구하기 (중심 기준)
+        const normX = (col - cols / 2) / (cols / 2);
+        const normY = (row - rows / 2) / (rows / 2);
+
+        // 비율에 따라 실제 오프스크린 좌표 계산
+        const sx = p5js.constrain(
+          captureW / 2 + normX * (captureW / 2 - grabW / 2),
           0,
-          dSliceW,
-          canvasH, // dest
-          sx,
-          0,
-          sSliceW,
-          captureH // src
+          captureW - grabW
         );
-      } else {
-        // 홀수 줄: 세로 뒤집기 (캔버스 변환으로 플립)
-        p5js.push();
-        p5js.translate(0, canvasH);
-        p5js.scale(1, -1); // 세로 반전
-        p5js.image(
-          offscreen,
-          dx,
+        const sy = p5js.constrain(
+          captureH / 2 + normY * (captureH / 2 - grabH / 2),
           0,
-          dSliceW,
-          canvasH, // dest (뒤집힌 좌표계 기준)
-          sx,
-          0,
-          sSliceW,
-          captureH // src
+          captureH - grabH
         );
-        p5js.pop();
+
+        // 자른 화면 가져오기
+        const cropped = offscreen.get(sx, sy, grabW, grabH);
+
+        // 캔버스에 출력
+        const dx = col * cellW;
+        const dy = row * cellH;
+        p5js.image(cropped, dx, dy, cellW, cellH);
       }
     }
   },
