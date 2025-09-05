@@ -1,19 +1,48 @@
-// 사용하시기 전 디스코드에 다른 팀이 사용하고 있는지 확인해주시고,
-// 사용하실 때 몇번 파일 쓰겠다고 말씀해주세요(디스코드 photo booth 채널에)
 export const templateFilter6 = {
-  // 함수 이름을 원하는 대로 변경하세요(파일명 변경X, index.js에서도 변경 필요)
   setup(p5js) {
-    //setup 함수에 넣을 부분
-    //p5js 내장함수 앞에 p5js.를 붙여야 함
+    p5js.numLines = 150;
+    p5js.strokeW = 1;
+    p5js.distortion = 20;
+
+    p5js.noFill();
+    p5js.pixelDensity(1); // 디바이스에 관계없이 동일 렌더링
   },
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    //draw 함수에 넣을 부분
-    //p5js 내장함수 앞에 p5js.를 붙여야 함
-    //canvasW, canvasH는 캔버스 크기, captureW, captureH는 비디오 캡처 크기
-    //원본 비디오 삽입하고 싶으면 p5js.image(offscreen, 0, 0, canvasW, canvasH); 작성
-    p5js.fill(50, 50, 50);
-    p5js.rect(0, 0, canvasW, canvasH);
+    p5js.background(255);
+    offscreen.loadPixels();
+
+    const step = canvasW / p5js.numLines;
+
+    p5js.strokeWeight(p5js.strokeW);
+
+    for (let x = 0; x < canvasW; x += step) {
+      p5js.beginShape();
+      for (let y = 0; y < canvasH; y++) {
+        const ix = Math.floor((x / canvasW) * captureW);
+        const iy = Math.floor((y / canvasH) * captureH);
+        const index = (iy * captureW + ix) * 4;
+
+        const r = offscreen.pixels[index];
+        const g = offscreen.pixels[index + 1];
+        const b = offscreen.pixels[index + 2];
+        const bright = (r + g + b) / 3;
+
+        const offsetX = p5js.map(
+          bright,
+          0,
+          255,
+          -p5js.distortion,
+          p5js.distortion
+        );
+
+        const posX = x + offsetX;
+        const posY = y;
+
+        p5js.stroke(11, 120, 255, 220);
+        p5js.vertex(posX, posY);
+      }
+      p5js.endShape();
+    }
   },
 };
-// 사용하실 때 각주는 지우고 사용하셔도 됩니다
