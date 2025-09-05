@@ -1,53 +1,63 @@
 export const templateFilter5 = {
   params: {
-    verticalDivisions: 3,
     opacity: {
       value: 0.5,
       min: 0.1,
       max: 1.0,
       step: 0.1,
-      label: '투명도',
+      label: "투명도",
     },
   },
 
   setup(p5js) {
-    this.verticalDivisions = this.params.verticalDivisions;
     this.opacity = this.params.opacity.value;
     p5js.colorMode(p5js.RGB, 255);
   },
 
   updateParams(params) {
-    if (params.verticalDivisions !== undefined)
-      this.verticalDivisions = params.verticalDivisions;
     if (params.opacity !== undefined) this.opacity = params.opacity;
   },
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    // 세로로만 n등분
-    const segmentHeight = Math.floor(captureH / this.verticalDivisions);
-
-    // 기존 이미지 유지
+    // 기존 이미지를 먼저 그리기
     p5js.image(offscreen, 0, 0, canvasW, canvasH);
 
-    // 각 분할된 세그먼트에 대해 처리
-    for (let i = 0; i < this.verticalDivisions; i++) {
-      const sourceY = i * segmentHeight;
-      const height =
-        i === this.verticalDivisions - 1 ? captureH - sourceY : segmentHeight;
+    // 화면을 가로 세로 반씩 4등분
+    const halfWidth = Math.floor(captureW / 2);
+    const halfHeight = Math.floor(captureH / 2);
 
-      // 현재 세그먼트 영역 가져오기
-      const segment = offscreen.get(0, sourceY, captureW, height);
+    // 4개의 사분면 정의
+    const segments = [
+      { x: 0, y: 0, w: halfWidth, h: halfHeight }, // 좌상
+      { x: halfWidth, y: 0, w: captureW - halfWidth, h: halfHeight }, // 우상
+      { x: 0, y: halfHeight, w: halfWidth, h: captureH - halfHeight }, // 좌하
+      {
+        x: halfWidth,
+        y: halfHeight,
+        w: captureW - halfWidth,
+        h: captureH - halfHeight,
+      }, // 우하
+    ];
 
-      // 좌우 반전된 이미지 생성
-      offscreen.push();
-      offscreen.translate(captureW, 0);
-      offscreen.scale(-1, 1);
-      offscreen.tint(255, this.opacity * 255);
-      offscreen.image(segment, 0, sourceY);
-      offscreen.pop();
+    // 각 사분면을 전체 화면으로 확대하여 투명도로 겹치기
+    p5js.tint(255, this.opacity * 255);
+
+    for (let i = 0; i < segments.length; i++) {
+      const segment = segments[i];
+
+      // 해당 영역의 이미지 추출
+      const segmentImg = offscreen.get(
+        segment.x,
+        segment.y,
+        segment.w,
+        segment.h
+      );
+
+      // 전체 캔버스 크기로 확대하여 그리기
+      p5js.image(segmentImg, 0, 0, canvasW, canvasH);
     }
 
-    // 최종 이미지를 캔버스에 그리기
-    p5js.image(offscreen, 0, 0, canvasW, canvasH);
+    // tint 초기화
+    p5js.noTint();
   },
 };
