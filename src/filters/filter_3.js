@@ -1,19 +1,49 @@
-// 사용하시기 전 디스코드에 다른 팀이 사용하고 있는지 확인해주시고,
-// 사용하실 때 몇번 파일 쓰겠다고 말씀해주세요(디스코드 photo booth 채널에)
 export const templateFilter3 = {
-  // 함수 이름을 원하는 대로 변경하세요(파일명 변경X, index.js에서도 변경 필요)
   setup(p5js) {
-    //setup 함수에 넣을 부분
-    //p5js 내장함수 앞에 p5js.를 붙여야 함
+    p5js.noStroke();
+    p5js.imageMode(p5js.CORNER);
   },
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    //draw 함수에 넣을 부분
-    //p5js 내장함수 앞에 p5js.를 붙여야 함
-    //canvasW, canvasH는 캔버스 크기, captureW, captureH는 비디오 캡처 크기
-    //원본 비디오 삽입하고 싶으면 p5js.image(offscreen, 0, 0, canvasW, canvasH); 작성
-    p5js.fill(50, 50, 50);
-    p5js.rect(0, 0, canvasW, canvasH);
+    p5js.background(255);
+
+    const cols = 9;
+    const rows = 7;
+
+    // 각 셀의 캔버스 크기
+    const cellW = canvasW / cols;
+    const cellH = canvasH / rows;
+
+    // 캡처 크기 설정 (캡처 화면에서 잘라올 부분의 크기)
+    const grabW = captureW * 0.2;
+    const grabH = captureH * 0.2;
+
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        // [-1, 1] 범위로 위치 비율 구하기 (중심 기준)
+        const normX = (col - cols / 2) / (cols / 2);
+        const normY = (row - rows / 2) / (rows / 2);
+
+        // 비율에 따라 실제 오프스크린 좌표 계산
+        const sx = p5js.constrain(
+          captureW / 2 + normX * (captureW / 2 - grabW / 2),
+          0,
+          captureW - grabW
+        );
+        const sy = p5js.constrain(
+          captureH / 2 + normY * (captureH / 2 - grabH / 2),
+          0,
+          captureH - grabH
+        );
+
+        // 자른 화면 가져오기
+        const cropped = offscreen.get(sx, sy, grabW, grabH);
+
+        // 캔버스에 출력
+        const dx = col * cellW;
+        const dy = row * cellH;
+        p5js.image(cropped, dx, dy, cellW, cellH);
+      }
+    }
   },
 };
-// 사용하실 때 각주는 지우고 사용하셔도 됩니다
