@@ -22,8 +22,8 @@ export const templateFilter2 = {
 
     // === 좌우 반전 ===
     p5js.push();
-    p5js.translate(canvasW, 0);
-    p5js.scale(-1, 1);
+    // p5js.translate(canvasW, 0);
+    // p5js.scale(-1, 1);
 
     // 비율 맞추기
     const scaleFactor = Math.min(canvasW / vw, canvasH / vh);
