@@ -1,19 +1,63 @@
-// 사용하시기 전 디스코드에 다른 팀이 사용하고 있는지 확인해주시고,
-// 사용하실 때 몇번 파일 쓰겠다고 말씀해주세요(디스코드 photo booth 채널에)
 export const templateFilter7 = {
-  // 함수 이름을 원하는 대로 변경하세요(파일명 변경X, index.js에서도 변경 필요)
+  cellSize: 4,
+  levelCnt: 3,
+  colCnt: 0,
+  rowCnt: 0,
+  scaleX: 0,
+  scaleY: 0,
+  levels: null,
+
   setup(p5js) {
-    //setup 함수에 넣을 부분
-    //p5js 내장함수 앞에 p5js.를 붙여야 함
+    p5js.noStroke();
+
+    this.colCnt = p5js.floor(p5js.width / this.cellSize);
+    this.rowCnt = p5js.floor(p5js.height / this.cellSize);
+
+    this.levels = new Array(this.colCnt);
+    for (let col = 0; col < this.colCnt; col++) {
+      this.levels[col] = new Array(this.rowCnt);
+    }
   },
 
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    //draw 함수에 넣을 부분
-    //p5js 내장함수 앞에 p5js.를 붙여야 함
-    //canvasW, canvasH는 캔버스 크기, captureW, captureH는 비디오 캡처 크기
-    //원본 비디오 삽입하고 싶으면 p5js.image(offscreen, 0, 0, canvasW, canvasH); 작성
-    p5js.fill(50, 50, 50);
-    p5js.rect(0, 0, canvasW, canvasH);
+    p5js.background(255);
+    offscreen.loadPixels();
+
+    this.scaleX = offscreen.width / this.colCnt;
+    this.scaleY = offscreen.height / this.rowCnt;
+
+    for (let col = 0; col < this.colCnt; col++) {
+      for (let row = 0; row < this.rowCnt; row++) {
+        let videoX = Math.floor(col * this.scaleX);
+        let videoY = Math.floor(row * this.scaleY);
+        let index = (videoY * offscreen.width + videoX) * 4;
+        let r = offscreen.pixels[index];
+        let g = offscreen.pixels[index + 1];
+        let b = offscreen.pixels[index + 2];
+        let brightness = (r + g + b) / 3;
+        let level = Math.floor(p5js.map(brightness, 0, 255, 0, this.levelCnt));
+        this.levels[col][row] = level;
+      }
+    }
+    p5js.stroke(0, 0, 255);
+    p5js.strokeWeight(2);
+    p5js.noFill();
+
+    for (let col = 0; col < this.colCnt - 1; col++) {
+      for (let row = 0; row < this.rowCnt - 1; row++) {
+        let cur = this.levels[col][row];
+        let right = this.levels[col + 1][row];
+        let bottom = this.levels[col][row + 1];
+        let x = col * this.cellSize;
+        let y = row * this.cellSize;
+
+        if (cur !== right) {
+          p5js.line(x + this.cellSize, y, x + this.cellSize, y + this.cellSize);
+        }
+        if (cur !== bottom) {
+          p5js.line(x, y + this.cellSize, x + this.cellSize, y + this.cellSize);
+        }
+      }
+    }
   },
 };
-// 사용하실 때 각주는 지우고 사용하셔도 됩니다
