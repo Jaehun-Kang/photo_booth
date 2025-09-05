@@ -1,19 +1,54 @@
-// 사용하시기 전 디스코드에 다른 팀이 사용하고 있는지 확인해주시고,
-// 사용하실 때 몇번 파일 쓰겠다고 말씀해주세요(디스코드 photo booth 채널에)
+// src/filters/filter_stripe_flip.js 등으로 저장
 export const templateFilter3 = {
-  // 함수 이름을 원하는 대로 변경하세요(파일명 변경X, index.js에서도 변경 필요)
   setup(p5js) {
-    //setup 함수에 넣을 부분
-    //p5js 내장함수 앞에 p5js.를 붙여야 함
+    p5js.pixelDensity(1);
+    p5js.imageMode(p5js.CORNER);
   },
 
+  // offscreen: 비디오 프레임, canvasW/H: 캔버스, captureW/H: 비디오 원본
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    //draw 함수에 넣을 부분
-    //p5js 내장함수 앞에 p5js.를 붙여야 함
-    //canvasW, canvasH는 캔버스 크기, captureW, captureH는 비디오 캡처 크기
-    //원본 비디오 삽입하고 싶으면 p5js.image(offscreen, 0, 0, canvasW, canvasH); 작성
-    p5js.fill(50, 50, 50);
-    p5js.rect(0, 0, canvasW, canvasH);
+    const numSlices = 20; // 세로 줄 개수
+    const dSliceW = canvasW / numSlices; // 캔버스 한 줄 너비
+    const sSliceW = captureW / numSlices; // 원본 한 줄 너비
+
+    // 배경 비우기(필요 시 배경색 지정 가능)
+    p5js.clear();
+
+    for (let i = 0; i < numSlices; i++) {
+      const dx = i * dSliceW; // 목적지 X
+      const sx = Math.floor(i * sSliceW); // 소스 X
+
+      if (i % 2 === 0) {
+        // 짝수 줄: 그대로
+        p5js.image(
+          offscreen,
+          dx,
+          0,
+          dSliceW,
+          canvasH, // dest
+          sx,
+          0,
+          sSliceW,
+          captureH // src
+        );
+      } else {
+        // 홀수 줄: 세로 뒤집기 (캔버스 변환으로 플립)
+        p5js.push();
+        p5js.translate(0, canvasH);
+        p5js.scale(1, -1); // 세로 반전
+        p5js.image(
+          offscreen,
+          dx,
+          0,
+          dSliceW,
+          canvasH, // dest (뒤집힌 좌표계 기준)
+          sx,
+          0,
+          sSliceW,
+          captureH // src
+        );
+        p5js.pop();
+      }
+    }
   },
 };
-// 사용하실 때 각주는 지우고 사용하셔도 됩니다
