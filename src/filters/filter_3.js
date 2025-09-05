@@ -7,8 +7,8 @@ export const templateFilter3 = {
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
     p5js.background(255);
 
-    const cols = 10;
-    const rows = 10;
+    const cols = 9;
+    const rows = 7;
 
     // 각 셀의 캔버스 크기
     const cellW = canvasW / cols;

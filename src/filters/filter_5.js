@@ -1,27 +1,11 @@
-export const templateFilter5 = {
-  params: {
-    opacity: {
-      value: 0.5,
-      min: 0.1,
-      max: 1.0,
-      step: 0.1,
-      label: "투명도",
-    },
-  },
+const opacity = 0.25;
 
+export const templateFilter5 = {
   setup(p5js) {
-    this.opacity = this.params.opacity.value;
     p5js.colorMode(p5js.RGB, 255);
   },
 
-  updateParams(params) {
-    if (params.opacity !== undefined) this.opacity = params.opacity;
-  },
-
   draw(p5js, offscreen, canvasW, canvasH, captureW, captureH) {
-    // 기존 이미지를 먼저 그리기
-    p5js.image(offscreen, 0, 0, canvasW, canvasH);
-
     // 화면을 가로 세로 반씩 4등분
     const halfWidth = Math.floor(captureW / 2);
     const halfHeight = Math.floor(captureH / 2);
@@ -40,7 +24,7 @@ export const templateFilter5 = {
     ];
 
     // 각 사분면을 전체 화면으로 확대하여 투명도로 겹치기
-    p5js.tint(255, this.opacity * 255);
+    p5js.tint(255, opacity * 255);
 
     for (let i = 0; i < segments.length; i++) {
       const segment = segments[i];
