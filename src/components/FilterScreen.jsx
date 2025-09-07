@@ -157,7 +157,7 @@ const FilterScreen = ({ sketchFactory, video }) => {
         height: "100vh",
         width: size ? `${size.width}px` : "100vw",
         margin: "0 auto",
-        backgroundColor: "#000",
+        backgroundColor: "#fff",
         position: "relative",
         overflow: "hidden",
         display: "flex",
