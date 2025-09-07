@@ -4,4 +4,4 @@
 
 ## URL
 
-URL: https://jaehun-kang.github.io/photo_booth/
+https://jaehun-kang.github.io/photo_booth/
